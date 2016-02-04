@@ -6,9 +6,8 @@ import getopt
 import math
 import operator
 from models import LanguageModel
+from constants import *
 
-THRESHOLD_MISSING = 0.5
-N = 4
 models = {}
 
 def parse(line, labeled=False):
@@ -23,23 +22,38 @@ def parse(line, labeled=False):
     else:
         datastr = line.strip()
 
+    if ONLY_ALPHA:
+        datastr = datastr.lower()
+        datastr = filter(lambda x: x.isalpha() or x == ' ', datastr)
+
     ngrams = get_ngrams(datastr)
     return (label, ngrams)
 
 def get_tokens(data):
-    i = 0
-    while i  < (len(data) - (N-1)):
-        yield data[i:i+N]
-        i += 1
+    if MODE == 'words':
+        i = 0
+        tokens = data.split()
+        while i < (len(tokens) - (N-1)):
+            yield ' '.join(tokens[i:i+N])
+            i += 1
+    else:
+        i = 0
+        while i  < (len(data) - (N-1)):
+            yield data[i:i+N]
+            i += 1
+    
 
 def get_ngrams(data):
     ngrams = [ x for x in get_tokens(data) ]
+    if len(ngrams) == 0:
+        return []
 
-    ngrams.insert(0, '<start>' + ngrams[0][0:N-1])
-    ngrams.append(ngrams[-1][1:N] + '<end>')
-
-    print data
-    print ngrams
+    if MODE == 'words':
+        ngrams.insert(0, ' '.join(['<start>'] + ngrams[0].split()[0:N-1]))
+        ngrams.append(' '.join(ngrams[-1].split()[1:N] + ['<end>']))
+    else:
+        ngrams.insert(0, '<start>' + ngrams[0][0:N-1])
+        ngrams.append(ngrams[-1][1:N] + '<end>')
 
     return ngrams
 
@@ -100,8 +114,13 @@ def test_LM(in_file, out_file, LM):
                     else:
                         log_estimates[label] += math.log(models[label].get_p(ngram))
 
+
             missing_p /= 3
-            missing_p /= 1.0 * len(ngrams)
+            
+            if len(ngrams) == 0:
+                missing_p = 1
+            else:
+                missing_p /= 1.0 * len(ngrams)
 
             prediction = max(log_estimates.iteritems(), key=operator.itemgetter(1))[0]
 
