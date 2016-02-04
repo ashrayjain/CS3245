@@ -1,7 +1,7 @@
 class LanguageModel:
 
-    def __init__(self, label, initial_counts={}, initial_probabilities={}):
-        self.label = label
+    def __init__(self, init_label, initial_counts={}, initial_probabilities={}):
+        self.label = init_label
         self.counts = initial_counts
         self.probabilities = initial_probabilities
 
@@ -21,4 +21,7 @@ class LanguageModel:
             self.probabilities[k] = self.counts[k] * 1.0 / denominator
 
     def get_p(self, ngram):
+        if ngram not in self.probabilities:
+            return 1
+
         return self.probabilities[ngram]
