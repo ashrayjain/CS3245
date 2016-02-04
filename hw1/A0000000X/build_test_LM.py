@@ -3,6 +3,42 @@ import re
 import nltk
 import sys
 import getopt
+from models import LanguageModel
+
+N = 4
+models = {}
+
+def parse(line, labeled=False):
+    tokens = line.strip().split()
+
+    label = ''
+    datastr = ''
+
+    if labeled:
+        label = tokens[0]
+        datastr = ' '.join(tokens[1:])
+    else:
+        datastr = line
+
+    ngrams = get_ngrams(datastr)
+    return (label, ngrams)
+
+def get_ngrams(data):
+    ngrams = []
+
+    for i in range(0, len(data) - (N - 1)):
+        ngrams.append(data[i:i+N])
+
+    return ngrams
+
+def insert_into_LMs(ngram, n_label):
+    global models
+
+    for label in models:
+        if not models[label].contains(ngram):
+            models[label].increment(ngram)
+
+    models[label].increment(ngram)
 
 def build_LM(in_file):
     """
@@ -13,6 +49,22 @@ def build_LM(in_file):
     # This is an empty method
     # Pls implement your code in below
     
+    global models
+
+    models['indonesian'] = LanguageModel('indonesian')
+    models['malaysian'] = LanguageModel('malaysian')
+    models['tamil'] = LanguageModel('tamil')
+
+    with open(in_file) as fin:
+        for line in fin:
+            label, ngrams = parse(line, labeled=True)
+
+            for ngram in ngrams:
+                insert_into_LMs(ngram, label)
+
+    for label in models:
+        models[label].build()
+
 def test_LM(in_file, out_file, LM):
     """
     test the language models on new URLs
