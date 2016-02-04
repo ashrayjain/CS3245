@@ -32,6 +32,9 @@ def get_ngrams(data):
     for i in range(0, len(data) - (N - 1)):
         ngrams.append(data[i:i+N])
 
+    ngrams.insert(0, '<start>' + ngrams[0][0:N-1])
+    ngrams.append(ngrams[-1][1:N] + '<end>')
+
     return ngrams
 
 def insert_into_LMs(ngram, n_label):
