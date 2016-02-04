@@ -22,6 +22,6 @@ class LanguageModel:
 
     def get_p(self, ngram):
         if ngram not in self.probabilities:
-            return 1
+            return -1
 
         return self.probabilities[ngram]

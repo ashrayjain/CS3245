@@ -7,6 +7,7 @@ import math
 import operator
 from models import LanguageModel
 
+THRESHOLD_MISSING = 0.5
 N = 4
 models = {}
 
@@ -80,12 +81,23 @@ def test_LM(in_file, out_file, LM):
             
             for label in models:
                 log_estimates[label] = 0
-
+            
+            # To store proportion missing
+            missing_p = 0
             for ngram in ngrams:
                 for label in models:
-                    log_estimates[label] += math.log(models[label].get_p(ngram))
+                    if models[label].get_p(ngram) == -1:
+                        missing_p += 1
+                    else:
+                        log_estimates[label] += math.log(models[label].get_p(ngram))
+
+            missing_p /= 3
+            missing_p /= 1.0 * len(ngrams)
 
             prediction = max(log_estimates.iteritems(), key=operator.itemgetter(1))[0]
+
+            if missing_p >= THRESHOLD_MISSING:
+                prediction = 'other'
             
             fout.write(prediction + ' ' + line)
 
