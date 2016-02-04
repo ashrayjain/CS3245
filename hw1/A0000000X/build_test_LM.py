@@ -3,6 +3,8 @@ import re
 import nltk
 import sys
 import getopt
+import math
+import operator
 from models import LanguageModel
 
 N = 4
@@ -38,7 +40,7 @@ def insert_into_LMs(ngram, n_label):
         if not models[label].contains(ngram):
             models[label].increment(ngram)
 
-    models[label].increment(ngram)
+    models[n_label].increment(ngram)
 
 def build_LM(in_file):
     """
@@ -46,14 +48,12 @@ def build_LM(in_file):
     each line in in_file contains a label and an URL separated by a tab(\t)
     """
     print 'building language models...'
-    # This is an empty method
-    # Pls implement your code in below
     
     global models
 
-    models['indonesian'] = LanguageModel('indonesian')
-    models['malaysian'] = LanguageModel('malaysian')
-    models['tamil'] = LanguageModel('tamil')
+    models['indonesian'] = LanguageModel('indonesian', {}, {})
+    models['malaysian'] = LanguageModel('malaysian', {}, {})
+    models['tamil'] = LanguageModel('tamil', {}, {})
 
     with open(in_file) as fin:
         for line in fin:
@@ -72,8 +72,22 @@ def test_LM(in_file, out_file, LM):
     you should print the most probable label for each URL into out_file
     """
     print "testing language models..."
-    # This is an empty method
-    # Pls implement your code in below
+
+    with open(in_file) as fin, open(out_file, 'w') as fout:
+        for line in fin:
+            null_label, ngrams = parse(line)
+            log_estimates = {}
+            
+            for label in models:
+                log_estimates[label] = 0
+
+            for ngram in ngrams:
+                for label in models:
+                    log_estimates[label] += math.log(models[label].get_p(ngram))
+
+            prediction = max(log_estimates.iteritems(), key=operator.itemgetter(1))[0]
+            
+            fout.write(prediction + ' ' + line)
 
 def usage():
     print "usage: " + sys.argv[0] + " -b input-file-for-building-LM -t input-file-for-testing-LM -o output-file"
