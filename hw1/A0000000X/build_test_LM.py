@@ -21,19 +21,25 @@ def parse(line, labeled=False):
         label = tokens[0]
         datastr = ' '.join(tokens[1:])
     else:
-        datastr = line
+        datastr = line.strip()
 
     ngrams = get_ngrams(datastr)
     return (label, ngrams)
 
-def get_ngrams(data):
-    ngrams = []
+def get_tokens(data):
+    i = 0
+    while i  < (len(data) - (N-1)):
+        yield data[i:i+N]
+        i += 1
 
-    for i in range(0, len(data) - (N - 1)):
-        ngrams.append(data[i:i+N])
+def get_ngrams(data):
+    ngrams = [ x for x in get_tokens(data) ]
 
     ngrams.insert(0, '<start>' + ngrams[0][0:N-1])
     ngrams.append(ngrams[-1][1:N] + '<end>')
+
+    print data
+    print ngrams
 
     return ngrams
 
