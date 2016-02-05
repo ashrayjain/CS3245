@@ -29,3 +29,4 @@ Temporary Items
 
 
 *.zip
+nltk_data/*
