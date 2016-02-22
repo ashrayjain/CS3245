@@ -47,39 +47,3 @@ def get_unique_vocab(text):
     for s in sent_tokenize(text):
         v += [STEMMER.stem(w).lower() for w in word_tokenize(s)]
     return set(v)
-
-
-def print_postings(term, d, p):
-    freq, offset = d.term(term)
-    if freq is None:
-        print "No entries for '{}'".format(term)
-        return
-    print "{} entries for '{}'".format(freq, term)
-    print '\t',
-    while offset is not None:
-        print '->',
-        entry = p.read_entry_at_offset(offset)
-        print entry.doc_id,
-        offset = entry.next_ptr
-    print
-
-if __name__ == '__main__':
-    vocab = ['a', 'the', 'a', 'the', 'food', 'lol', 'what']
-    doc_id = 1
-    d = Dictionary('dictionary.txt')
-    p = Postings('postings.txt')
-    add_vocab_to_index(doc_id, vocab, d, p)
-    vocab = ['the', 'food', 'the', 'foobar', 'what']
-    doc_id = 2
-    add_vocab_to_index(doc_id, vocab, d, p)
-    del p
-    del d
-
-    d = Dictionary('dictionary.txt')
-    print d._terms
-    p = Postings('postings.txt')
-    print_postings('the', d, p)
-    print_postings('food', d, p)
-    print_postings('a', d, p)
-    print_postings('lol', d, p)
-    print_postings('nonexistent', d, p)
