@@ -1,11 +1,14 @@
 import os
 import os.path as osp
+from math import sqrt, ceil
+
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.stem.porter import PorterStemmer
+
 from dictionary import Dictionary
 from postings import Postings
 from postings_entry import PostingsEntry
 
-from nltk.tokenize import sent_tokenize, word_tokenize
-from nltk.stem.porter import PorterStemmer
 
 DEBUG_LIMIT = 100
 STEMMER = PorterStemmer()
@@ -23,7 +26,7 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
         doc_id = int(training_file)
         doc_path = osp.join(training_data_dir, training_file)
         add_doc_to_index(doc_id, doc_path, dictionary, postings)
-    print dictionary.term("transfer")
+    create_skip_pointers(dictionary, postings)
 
 
 def add_doc_to_index(doc_id, doc_path, d, p):
@@ -40,6 +43,30 @@ def add_vocab_to_index(doc_id, vocab, d, p):
             p.add_entry(PostingsEntry(doc_id, None))
         else:
             p.add_entry(PostingsEntry(doc_id, existing_term_offset))
+
+
+def create_skip_pointers(d, p):
+    for term, term_obj in d.terms():
+        frequency, ptr_to_entry = term_obj
+        skip_len = int(ceil(sqrt(frequency)))
+
+        # no need for skip pointers for short lists
+        if skip_len < 3:
+            continue
+
+        base_entry = p.read_entry_at_offset(ptr_to_entry)
+        skip_to_entry = base_entry
+        while skip_to_entry.next_ptr is not None:
+            skips = 0
+            while skip_to_entry.next_ptr is not None and skips != skip_len:
+                skip_to_entry = p.read_entry_at_offset(skip_to_entry.next_ptr)
+                skips += 1
+            if skips != skip_len:
+                break
+            base_entry.skip_ptr = skip_to_entry.offset
+            base_entry.skip_doc_id = skip_to_entry.doc_id
+            p.add_entry(base_entry, base_entry.offset)
+            base_entry = skip_to_entry
 
 
 def get_unique_vocab(text):

@@ -12,12 +12,19 @@ class Postings(object):
         if offset % PostingsEntry.ENTRY_SIZE != 0:
             raise ValueError('invalid offset: {}'.format(offset))
         self._file.seek(offset)
-        return PostingsEntry.from_string(
-            self._file.read(PostingsEntry.ENTRY_SIZE)
+        return PostingsEntry.from_postings(
+            self._file.read(PostingsEntry.ENTRY_SIZE),
+            offset
         )
 
-    def add_entry(self, entry):
-        self._file.write(str(entry))
+    def add_entry(self, entry, offset=None):
+        if offset is None:
+            self._file.write(str(entry))
+        elif offset % PostingsEntry.ENTRY_SIZE != 0:
+            raise ValueError('invalid offset: {}'.format(offset))
+        else:
+            self._file.seek(offset)
+            self._file.write(str(entry))
 
     def current_offset(self):
         return self._file.tell()

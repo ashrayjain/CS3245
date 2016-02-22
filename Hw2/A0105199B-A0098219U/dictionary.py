@@ -17,6 +17,9 @@ class Dictionary(object):
     def term(self, term):
         return self._terms.get(term, (None, None))
 
+    def terms(self):
+        return self._terms.iteritems()
+
     def save(self):
         with open(self._file_name, 'w') as f:
             pickle.dump(self._terms, f, pickle.HIGHEST_PROTOCOL)

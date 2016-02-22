@@ -6,16 +6,17 @@ from postings import Postings
 d = Dictionary('dictionary.txt')
 p = Postings('postings.txt')
 
-def postings(term):
-    freq, offset = d.term(term)
+
+def postings(term, skips=False):
+    freq, next_ptr = d.term(term)
     if freq is None:
         print "No entries for '{}'".format(term)
         return
     print "{} entries for '{}'".format(freq, term)
     print '\t',
-    while offset is not None:
+    while next_ptr is not None:
         print '->',
-        entry = p.read_entry_at_offset(offset)
+        entry = p.read_entry_at_offset(next_ptr)
         print entry.doc_id,
-        offset = entry.next_ptr
+        next_ptr = entry.next_ptr if not skips else entry.skip_ptr
     print
