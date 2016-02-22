@@ -1,14 +1,12 @@
-import os.path as osp
 from postings_entry import PostingsEntry
 
 
 class Postings(object):
 
     def __init__(self, file_name):
-        if osp.exists(file_name):
-            self._file = open(file_name, 'r+')
-        else:
-            self._file = open(file_name, 'w+')
+        # ensure the file exists
+        open(file_name, 'a').close()
+        self._file = open(file_name, 'r+')
 
     def read_entry_at_offset(self, offset):
         if offset % PostingsEntry.ENTRY_SIZE != 0:

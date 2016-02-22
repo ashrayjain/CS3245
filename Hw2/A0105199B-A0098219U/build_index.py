@@ -23,7 +23,6 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
         doc_id = int(training_file)
         doc_path = osp.join(training_data_dir, training_file)
         add_doc_to_index(doc_id, doc_path, dictionary, postings)
-    dictionary.save()
     print dictionary.term("transfer")
 
 
@@ -73,12 +72,10 @@ if __name__ == '__main__':
     vocab = ['the', 'food', 'the', 'foobar', 'what']
     doc_id = 2
     add_vocab_to_index(doc_id, vocab, d, p)
-    d.save()
     del p
     del d
 
     d = Dictionary('dictionary.txt')
-    d.load()
     print d._terms
     p = Postings('postings.txt')
     print_postings('the', d, p)
