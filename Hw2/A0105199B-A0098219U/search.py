@@ -1,6 +1,6 @@
 import argparse
 from shunting_yard import get_reverse_polish
-from search_engine import execute_query
+from search_engine import Engine
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -16,6 +16,10 @@ parser.add_argument('--debug', dest='debug', default=False,
 args = parser.parse_args()
 
 with open(args.queries, 'r') as fq, open(args.output, 'w') as fo:
+
+    
+    engine = Engine(args.dictionary, args.postings)
+    
     for query in fq:
         reverse_polish = get_reverse_polish(query)
-        fo.write(str(execute_query(reverse_polish)) + '\n')
+        fo.write(str(engine.execute_query(reverse_polish)) + '\n')

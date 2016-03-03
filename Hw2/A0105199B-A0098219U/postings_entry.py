@@ -76,6 +76,8 @@ class PostingsEntry(object):
 
     @classmethod
     def from_postings(cls, string, offset):
+        if string == None:
+            return None
         if len(string) != cls.ENTRY_SIZE:
             raise ValueError('PostingsEntry string invalid: {}'.format(string))
         return cls(int(string[:cls.DOC_ID_SIZE]),
