@@ -13,6 +13,6 @@ def execute_query(reverse_polish):
             args.append(token)
         else:
             print 'Executing ', token, ' for args: ', str(args)
-            token.execute(args)
+            args = token.execute(args)
 
     return results

@@ -17,13 +17,36 @@ class OROperator(Operator):
     def __init__(self):
         super(OROperator, self).__init__('OR', 1, 'left')
 
+    def execute(self, args):
+        first = args[-2]
+        second = args[-1]
+
+        args = args[:-2] + ['resultOr']
+
+        return args
+
 class ANDOperator(Operator):
     def __init__(self):
         super(ANDOperator, self).__init__('AND', 2, 'left')
 
+    def execute(self, args):
+        first = args[-2]
+        second = args[-1]
+
+        args = args[:-2] + ['resultAnd']
+
+        return args
+
 class NOTOperator(Operator):
     def __init__(self):
         super(NOTOperator, self).__init__('NOT', 3, 'right')
+
+    def execute(self, args):
+        first = args[-2]
+
+        args = args[:-1] + ['resultNot']
+
+        return args
 
 class OpenBracketOperator(Operator):
     def __init__(self):
