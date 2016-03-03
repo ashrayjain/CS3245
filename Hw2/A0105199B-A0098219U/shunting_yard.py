@@ -1,5 +1,5 @@
 from collections import deque
-from operators import Operator, VALID_OPERATORS
+from operators import Operator, to_op, VALID_OPERATORS
 
 def get_reverse_polish(expr):
     op_stack = []
@@ -9,7 +9,7 @@ def get_reverse_polish(expr):
     expr = expr.replace(')', ' )')
 
     for token in expr.strip().split():
-        op = Operator(token)
+        op = to_op(token)
 
         if op in VALID_OPERATORS:
             while op_stack and \
@@ -20,7 +20,7 @@ def get_reverse_polish(expr):
                 out_queue.append(op_stack.pop())
             op_stack.append(op)
         elif token == '(':
-            op_stack.append(Operator(token))
+            op_stack.append(to_op(token))
         elif token == ')':
             while op_stack[-1].val !=  '(':
                 out_queue.append(op_stack.pop())
