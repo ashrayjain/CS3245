@@ -1,41 +1,31 @@
-from postings_entry import PostingsEntry
+from postings_list import PostingsList
+
+NOT_LIST_OFFSET = 0
 
 
 class Postings(object):
 
-    def __init__(self, file_name):
-        # ensure the file exists
-        open(file_name, 'a').close()
-        self._file = open(file_name, 'r+')
+    def __init__(self):
+        self._postings = [PostingsList()]
 
-    def read_entry_at_offset(self, offset):
-        if offset % PostingsEntry.ENTRY_SIZE != 0:
-            raise ValueError('invalid offset: {}'.format(offset))
-        self._file.seek(offset)
-        return PostingsEntry.from_postings(
-            self._file.read(PostingsEntry.ENTRY_SIZE),
-            offset
-        )
-
-    def add_entry(self, entry, offset=None):
-        if offset is None:
-            self._file.write(str(entry))
-        elif offset % PostingsEntry.ENTRY_SIZE != 0:
-            raise ValueError('invalid offset: {}'.format(offset))
+    def list_at_offset(self, offset):
+        if offset < len(self._postings):
+            return self._postings[offset]
         else:
-            self._file.seek(offset)
-            self._file.write(str(entry))
+            raise IndexError("offset out of bounds")
 
-    def current_offset(self):
-        return self._file.tell()
+    def not_list(self):
+        return self._postings[NOT_LIST_OFFSET]
 
-    def __del__(self):
-        self._file.close()
+    def new_list(self):
+        new_postings_list = PostingsList()
+        self._postings.append(new_postings_list)
+        return (self._postings[-1], len(self._postings) - 1)
+
 
 if __name__ == '__main__':
-    obj = Postings('postings.txt')
-    for i in xrange(1000, 10000, 500):
-        obj.add_entry(PostingsEntry(i, i + 12345))
-    print obj.read_entry_at_offset(PostingsEntry.ENTRY_SIZE * 0)
-    print obj.read_entry_at_offset(PostingsEntry.ENTRY_SIZE * 10)
-    print obj.read_entry_at_offset(PostingsEntry.ENTRY_SIZE * 7)
+    obj = Postings()
+    print obj.new_list()
+    print obj.new_list()
+    print obj.list_at_offset(1)
+    print obj.list_at_offset(0)

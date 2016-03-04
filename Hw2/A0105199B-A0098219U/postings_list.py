@@ -9,7 +9,7 @@ class PostingsList(object):
 
     def __init__(self):
         self._entries = []
-        self._idx = -1
+        self._idx = 0
         self._skip_length = -1
 
     @property
@@ -60,6 +60,13 @@ class PostingsList(object):
     def add_entries_from_string(self, string):
         self._entries.extend(string.split(' '))
         self._update_lens()
+
+    def reset(self):
+        self._idx = 0
+
+    def sort(self):
+        self._entries.sort()
+        self._idx = 0
 
     def __str__(self):
         return str(self._entries)
