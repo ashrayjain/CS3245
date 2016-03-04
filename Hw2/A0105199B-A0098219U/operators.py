@@ -1,3 +1,5 @@
+import merge_algos
+
 class Operator(object):
     def __init__(self, val='Default', precedence=-1, associativity='left', nargs=0):
         self.val = val
@@ -19,40 +21,29 @@ class OROperator(Operator):
         super(OROperator, self).__init__('OR', 1, 'left', 2)
 
     def execute(self, args):
-        first = args[-2]
-        second = args[-1]
-
-        if first == None:
-            return second
-        elif second == None:
-            return first
-
-        #TODO
-        return first
+        x = args[-2]
+        y = args[-1]
+       
+        return merge_algos.union(x, y)
 
 class ANDOperator(Operator):
     def __init__(self):
         super(ANDOperator, self).__init__('AND', 2, 'left', 2)
 
     def execute(self, args):
-        first = args[-2]
-        second = args[-1]
+        x = args[-2]
+        y = args[-1]
 
-        if first == None or second == None:
-            return None
-
-        #TODO
-        return first
+        return merge_algos.intersect(x, y)
 
 class NOTOperator(Operator):
     def __init__(self):
         super(NOTOperator, self).__init__('NOT', 3, 'right', 1)
 
     def execute(self, args):
-        first = args[-1]
+        x = args[-1]
 
-        #TODO
-        return None
+        return merge_algos.complement(x)
 
 class OpenBracketOperator(Operator):
     def __init__(self):

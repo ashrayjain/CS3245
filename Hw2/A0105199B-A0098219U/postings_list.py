@@ -32,7 +32,7 @@ class PostingsList(object):
         else:
             self._idx += 1
 
-    def can_skip(self, dirn=SKIP_LEFT):
+    def can_skip(self, dirn=SKIP_RIGHT):
         is_skip_entry = self._skip_len != -1 and \
             self._idx % self._skip_len == 0
         if dirn == SKIP_LEFT:
@@ -44,7 +44,7 @@ class PostingsList(object):
         else:
             return False
 
-    def skip(self, dirn=SKIP_LEFT):
+    def skip(self, dirn=SKIP_RIGHT):
         if self.can_skip(dirn):
             if dirn == SKIP_LEFT:
                 self._idx -= self._skip_len
