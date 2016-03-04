@@ -1,5 +1,3 @@
-import linecache
-
 from postings_list import PostingsList
 
 NOT_LIST_OFFSET = 0
@@ -12,6 +10,8 @@ class Postings(object):
         self._mode = mode
         if self._mode == 'w':
             self._postings = [PostingsList()]
+        else:
+            self._f = open(file_name)
 
     def list_at_offset(self, offset):
         if self._mode == 'w':
@@ -22,9 +22,12 @@ class Postings(object):
             else:
                 raise IndexError("offset out of bounds")
         else:
-            line = linecache.getline(self._file_name, offset + 1)[:-1]
+            self._f.seek(offset)
+            line = self._f.readline()[:-1]  # strip out newline
             p_list = PostingsList()
             p_list.add_from_string(line)
+            if p_list._entries_len == 0:
+                return None
             return p_list
 
     def not_list(self):

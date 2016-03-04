@@ -27,7 +27,6 @@ def add_until_end(p, r):
     while p.has_next():
         r.add(p.entry)
         p.next()
-
     r.add(p.entry)
 
 

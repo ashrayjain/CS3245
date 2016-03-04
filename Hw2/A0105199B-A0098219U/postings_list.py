@@ -11,6 +11,7 @@ class PostingsList(object):
     def __init__(self):
         self._entries = []
         self._idx = 0
+        self._entries_len = 0
         self._skip_length = -1
 
     @property
@@ -19,7 +20,10 @@ class PostingsList(object):
 
     @property
     def entry(self):
-        return self._entries[self._idx]
+        if self._idx < self._entries_len:
+            return self._entries[self._idx]
+        else:
+            return -1
 
     def _update_lens(self):
         self._entries_len = len(self._entries)

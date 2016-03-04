@@ -4,15 +4,21 @@ import cPickle as pickle
 
 class Dictionary(object):
     _terms = {}  # term format: [frequency, offset]
+    _offset_index = {}
 
     def __init__(self, file_name, load=False):
         self._file_name = file_name
         if load:
             self.load()
 
-    def add_term(self, term, offset):
+    def add_term(self, term, offset, add_to_offset_index=False):
         frequency = self._terms[term][0] if term in self._terms else 0
         self._terms[term] = (frequency + 1, offset)
+        if add_to_offset_index:
+            self._offset_index[offset] = term
+
+    def term_for_offset(self, offset):
+        return self._offset_index.get(offset, None)
 
     def term(self, term):
         return self._terms.get(term, (None, None))

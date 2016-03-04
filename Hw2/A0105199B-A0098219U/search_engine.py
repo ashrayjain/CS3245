@@ -27,6 +27,9 @@ class Engine(object):
                 if isinstance(token, NOTOperator):
                     args.append(self.postings.not_list())
                 # print '\nExecuting ', token, ' for args: ', str(args), '\n'
+                for i in range(len(args)):
+                    if args[i] is not None and args[i]._entries_len == 0:
+                        args[i] = None
                 splitpoint = -1 * token.nargs
                 o_args = args[splitpoint:]
                 args = args[:splitpoint] + [token.execute(o_args)]

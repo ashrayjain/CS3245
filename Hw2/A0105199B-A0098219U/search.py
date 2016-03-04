@@ -20,4 +20,8 @@ with open(args.queries, 'r') as fq:
         engine = Engine(args.dictionary, args.postings)
         for query in fq:
             reverse_polish = get_reverse_polish(query)
-            fo.write(str(engine.execute_query(reverse_polish)) + '\n')
+            result = engine.execute_query(reverse_polish)
+            if result is None:
+                fo.write('\n')
+            else:
+                fo.write(str(result).strip() + '\n')
