@@ -1,11 +1,12 @@
 from math import ceil, sqrt
 
 SKIP_THRESHOLD = 3
-SKIP_LEFT = -1
-SKIP_RIGHT = 1
 
 
 class PostingsList(object):
+
+    SKIP_LEFT = -1
+    SKIP_RIGHT = 1
 
     def __init__(self):
         self._entries = []
@@ -32,13 +33,16 @@ class PostingsList(object):
         else:
             self._idx += 1
 
+    def has_next(self):
+        return self._idx < self._entries_len - 1
+
     def can_skip(self, dirn=SKIP_RIGHT):
         is_skip_entry = self._skip_len != -1 and \
             self._idx % self._skip_len == 0
-        if dirn == SKIP_LEFT:
+        if dirn == self.SKIP_LEFT:
             return is_skip_entry and \
                 self._idx - self._skip_len >= 0
-        elif dirn == SKIP_RIGHT:
+        elif dirn == self.SKIP_RIGHT:
             return is_skip_entry and \
                 self._idx + self._skip_len < self._entries_len
         else:
@@ -46,19 +50,19 @@ class PostingsList(object):
 
     def skip(self, dirn=SKIP_RIGHT):
         if self.can_skip(dirn):
-            if dirn == SKIP_LEFT:
+            if dirn == self.SKIP_LEFT:
                 self._idx -= self._skip_len
-            elif dirn == SKIP_RIGHT:
+            elif dirn == self.SKIP_RIGHT:
                 self._idx += self._skip_len
         else:
             raise TypeError("can't skip at this entry")
 
-    def add_entry(self, entry):
+    def add(self, entry):
         self._entries.append(entry)
         self._update_lens()
 
-    def add_entries_from_string(self, string):
-        self._entries.extend(string.split(' '))
+    def add_from_string(self, string):
+        self._entries.extend([int(x) for x in string.split(' ')])
         self._update_lens()
 
     def reset(self):
@@ -69,4 +73,4 @@ class PostingsList(object):
         self._idx = 0
 
     def __str__(self):
-        return str(self._entries)
+        return " ".join([str(i) for i in self._entries])

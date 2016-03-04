@@ -5,9 +5,9 @@ import cPickle as pickle
 class Dictionary(object):
     _terms = {}  # term format: [frequency, offset]
 
-    def __init__(self, file_name):
+    def __init__(self, file_name, load=False):
         self._file_name = file_name
-        if osp.exists(self._file_name):
+        if load:
             self.load()
 
     def add_term(self, term, offset):
@@ -20,6 +20,9 @@ class Dictionary(object):
     def terms(self):
         return self._terms.iteritems()
 
+    def does_term_exist(self, term):
+        return term in self._terms
+
     def save(self):
         with open(self._file_name, 'w') as f:
             pickle.dump(self._terms, f, pickle.HIGHEST_PROTOCOL)
@@ -31,9 +34,6 @@ class Dictionary(object):
             self._terms = pickle.load(f)
         return True
 
-    def __del__(self):
-        if not osp.exists(self._file_name):
-            self.save()
 
 if __name__ == '__main__':
     obj = Dictionary('dictionary.txt')
@@ -46,10 +46,10 @@ if __name__ == '__main__':
     print 'Term \'the\':',
     print obj.term('the')
     print 'Saving to disk'
-    del obj
+    obj.save()
 
     print 'Loading dictionary from disk'
-    obj = Dictionary('dictionary.txt')
+    obj = Dictionary('dictionary.txt', load=True)
     print 'Term \'a\':',
     print obj.term('a')
     print 'Term \'the\':',
