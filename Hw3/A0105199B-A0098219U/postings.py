@@ -1,7 +1,5 @@
 from postings_list import PostingsList
 
-NOT_LIST_OFFSET = 0
-
 
 class Postings(object):
 
@@ -9,7 +7,7 @@ class Postings(object):
         self._file_name = file_name
         self._mode = mode
         if self._mode == 'w':
-            self._postings = [PostingsList()]
+            self._postings = []
         else:
             self._f = open(file_name)
 
@@ -26,14 +24,9 @@ class Postings(object):
             line = self._f.readline()[:-1]  # strip out newline
             p_list = PostingsList()
             p_list.add_from_string(line)
-            if p_list._entries_len == 0:
+            if len(p_list._entries) == 0:
                 return None
             return p_list
-
-    def not_list(self):
-        l = self.list_at_offset(NOT_LIST_OFFSET)
-        l.reset()
-        return l
 
     def new_list(self):
         if self._mode != 'w':

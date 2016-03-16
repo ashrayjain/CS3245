@@ -26,8 +26,7 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
 
     # turn line nos to byte offsets
     f = open(postings_file)
-    current_line = 1
-    f.readline()  # skip postings list containing all doc ids
+    current_line = 0
     while True:
         term = dictionary.term_for_offset(current_line)
         dictionary.add_term(term, f.tell(), update_freq=False)
@@ -58,4 +57,4 @@ def add_vocab_to_index(doc_id, vocab, d, p):
             d.add_term(term, offset, add_to_offset_index=True)
             p_list.add((doc_id, tf_val))
         doc_len_squared += tf_val * tf_val
-    p.not_list().add((doc_id, sqrt(doc_len_squared)))
+    d.add_doc_id(doc_id, sqrt(doc_len_squared))
