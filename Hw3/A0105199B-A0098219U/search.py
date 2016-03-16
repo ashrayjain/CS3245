@@ -1,6 +1,6 @@
 import argparse
-from utils import preprocess_query
-from search_engine import RankEngine
+from utils import preprocess_text
+from search_engine import RankedEngine
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,

@@ -5,7 +5,7 @@ from math import sqrt
 
 from dictionary import Dictionary
 from postings import Postings
-from utils import preprocess_doc, tf
+from utils import preprocess_text, tf
 
 DEBUG_LIMIT = 100
 
@@ -41,7 +41,7 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
 
 def add_doc_to_index(doc_id, doc_path, d, p):
     with open(doc_path) as f:
-        vocab = preprocess_doc(f.read())
+        vocab = preprocess_text(f.read())
     add_vocab_to_index(doc_id, vocab, d, p)
 
 

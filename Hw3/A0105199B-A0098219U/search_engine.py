@@ -5,6 +5,7 @@ from dictionary import Dictionary
 from postings import Postings
 from operators import Operator, NOTOperator
 
+
 class Engine(object):
     def __init__(self, fd, fp):
         self.dictionary = Dictionary(fd, load=True)
@@ -38,6 +39,7 @@ class Engine(object):
 
         return args[-1]
 
+
 class RankedEngine(Engine):
     HEAP_SIZE = 100
     NUM_RESULTS = 10
@@ -57,14 +59,14 @@ class RankedEngine(Engine):
         for d, tf in postings:
             scores[d] += qlt * tf
 
-    def _normalize(scores):
+    def _normalize(self, scores):
         for d in scores:
             scores[d] /= self.dictionary.doc_length(d)
 
     def _get_top(self, scores, k):
         tuples = []
-        
-        for k,v in scores.iteritems():
+
+        for k, v in scores.iteritems():
             tuples.append((v, k))
 
         heapq.heapify(tuples)
@@ -73,31 +75,33 @@ class RankedEngine(Engine):
 
     def _get_top_docs(self, lt_map):
         scores = {}
+        print lt_map
         for w in lt_map:
             dterm_info = self.dictionary.term(w)
             w_postings = self._get_postings(dterm_info)
 
             if w_postings:
-                self._update_score(scores, 
-                                    lt_map[w], 
-                                    w_postings)
-
+                self._update_score(scores, lt_map[w], w_postings)
+        
+        print scores
         self._normalize(scores)
+        print scores
 
         return map(
                 lambda x: x[1],
-                self._get_top(scores, NUM_RESULTS))
+                self._get_top(scores, RankedEngine.NUM_RESULTS))
 
     def execute_query(self, query_map):
+        print query_map
         lt_map = {}
         for w in query_map:
             lt_map[w] = self._get_lt(w, query_map[w])
 
-        denom = math.sqrt(
-                        reduce(lambda x, y: x**2 + y**2, 
-                            lt_map.values()))
+        denom = math.sqrt(sum(map(lambda x: x**2, lt_map.values())))
+        if denom == 0:
+            return ""
 
         for w in lt_map:
             lt_map[w] /= denom
 
-        return self._get_top_docs(lt_map)
+        return " ".join(str(x) for x in self._get_top_docs(lt_map))

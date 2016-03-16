@@ -31,6 +31,9 @@ class PostingsList(object):
         if self._skip_len < SKIP_THRESHOLD:
             self._skip_len = -1
 
+    def __iter__(self):
+        return self
+
     def next(self):
         if self._idx == self._entries_len - 1:
             raise StopIteration("no more entries")
@@ -68,7 +71,7 @@ class PostingsList(object):
     def add_from_string(self, string):
         for entry in string.split("|"):
             x, y = entry.split(" ")
-            self._entries.append((int(x), int(y)))
+            self._entries.append((int(x), float(y)))
         self._update_lens()
 
     def reset(self):

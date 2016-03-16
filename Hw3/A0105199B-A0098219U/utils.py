@@ -46,9 +46,9 @@ def preprocess_token(token):
     return STEMMER.stem(token).lower()
 
 
-def preprocess_doc(doc):
+def preprocess_text(text):
     v = {}
-    for w in word_tokenize(doc):
+    for w in word_tokenize(text):
         word = STEMMER.stem(w).lower()
         v[word] = v.get(word, 0) + 1
     return v
