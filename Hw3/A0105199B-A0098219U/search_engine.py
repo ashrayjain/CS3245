@@ -56,8 +56,15 @@ class RankedEngine(Engine):
         return utils.tf(wtf) * dterm_info[0]
 
     def _update_score(self, scores, qlt, postings):
-        for d, tf in postings:
+        curr = postings
+        while True:
+            d, tf = curr.entry 
             scores[d] += qlt * tf
+
+            if curr.has_next():
+                curr.next()
+            else:
+                break
 
     def _normalize(self, scores):
         for d in scores:
@@ -83,16 +90,13 @@ class RankedEngine(Engine):
             if w_postings:
                 self._update_score(scores, lt_map[w], w_postings)
         
-        print scores
         self._normalize(scores)
-        print scores
 
         return map(
                 lambda x: x[1],
                 self._get_top(scores, RankedEngine.NUM_RESULTS))
 
     def execute_query(self, query_map):
-        print query_map
         lt_map = {}
         for w in query_map:
             lt_map[w] = self._get_lt(w, query_map[w])
