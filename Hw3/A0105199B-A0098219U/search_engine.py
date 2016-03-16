@@ -89,8 +89,9 @@ class RankedEngine(Engine):
         for w in lt_map:
             dterm_info = self.dictionary.term(w)
             w_postings = self._get_postings(dterm_info)
-
-            if w_postings:
+            print w_postings, w_postings == None
+            if w_postings is not None:
+                print w_postings
                 self._update_score(scores, lt_map[w], w_postings)
         
         self._normalize(scores)

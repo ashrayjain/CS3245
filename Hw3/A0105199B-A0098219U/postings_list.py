@@ -23,16 +23,13 @@ class PostingsList(object):
         if self._idx < self._entries_len:
             return self._entries[self._idx]
         else:
-            return -1
+            return (None, None)
 
     def _update_lens(self):
         self._entries_len = len(self._entries)
         self._skip_len = int(ceil(sqrt(self._entries_len)))
         if self._skip_len < SKIP_THRESHOLD:
             self._skip_len = -1
-
-    def __iter__(self):
-        return self
 
     def next(self):
         if self._idx == self._entries_len - 1:
