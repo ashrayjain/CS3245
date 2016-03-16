@@ -1,6 +1,6 @@
 import argparse
-from utils import get_reverse_polish
-from search_engine import Engine
+from utils import preprocess_query
+from search_engine import RankEngine
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -17,10 +17,11 @@ args = parser.parse_args()
 
 with open(args.queries, 'r') as fq:
     with open(args.output, 'w') as fo:
-        engine = Engine(args.dictionary, args.postings)
+        engine = RankedEngine(args.dictionary, args.postings)
         for query in fq:
-            reverse_polish = get_reverse_polish(query)
-            result = engine.execute_query(reverse_polish)
+            query_map = preprocess_text(query)
+
+            result = engine.execute_query(query_map)
             if result is None:
                 fo.write('\n')
             else:

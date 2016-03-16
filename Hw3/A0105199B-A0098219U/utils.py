@@ -53,7 +53,6 @@ def preprocess_doc(doc):
         v[word] = v.get(word, 0) + 1
     return v
 
-
 def tf(val):
     if val > 0:
         return 1 + log10(val)
