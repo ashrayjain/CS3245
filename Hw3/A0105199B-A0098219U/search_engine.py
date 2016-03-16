@@ -59,7 +59,10 @@ class RankedEngine(Engine):
         curr = postings
         while True:
             d, tf = curr.entry 
-            scores[d] += qlt * tf
+            if scores.get(d):
+                scores[d] += qlt * tf
+            else:
+                scores[d] = qlt * tf
 
             if curr.has_next():
                 curr.next()
