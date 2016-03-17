@@ -25,9 +25,9 @@ class Engine(object):
             scores[doc_id] /= (q_len * self.dictionary.doc_length(doc_id))
 
     def _get_top_n_docs(self, scores, n):
-        scores_heap = [(-v, -k) for k, v in scores.items()]
+        scores_heap = [(-v, k) for k, v in scores.items()]
         heapq.heapify(scores_heap)
-        return [-heapq.heappop(scores_heap)[1] for i in xrange(n)
+        return [heapq.heappop(scores_heap)[1] for i in xrange(n)
                 if len(scores_heap) > 0]
 
     def execute_query(self, query_map):
