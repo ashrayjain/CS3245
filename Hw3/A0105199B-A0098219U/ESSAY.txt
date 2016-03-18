@@ -15,3 +15,5 @@ Replace this file with the answers to the essay questions here.
 
 
 3. Do you think zone or field parametric indices would be useful for practical search in the Reuters collection? Note: the Reuters collection does have metadata for each article but the quality of the metadata is not uniform, nor are the metadata classifications uniformly applied (some documents have it, some don't). Hint: for the next Homework #4, we will be using field metadata, so if you want to base Homework #4 on your Homework #3, you're welcomed to start support of this early (although no extra credit will be given if it's right).
+
+Yes, zone or field parametric indices would be useful for searching by specific parameters like "Author", "Date" etc. in the context of the Reuters collection. Even if the quality of the metadata is non uniform, it can still be beneficial to the end user. The end user can use it to try to reach the results they want quicker. However, since the metadata quality can be questionable, recall might suffer for some queries, which maybe ok depending on the context. 
