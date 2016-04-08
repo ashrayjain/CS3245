@@ -72,5 +72,5 @@ class Engine(object):
         self._normalize(scores, q_len)
 
         # find top n
-        top_n_docs = self._get_top_n_docs(scores, Engine.NUM_RESULTS)
-        return " ".join(str(x) for x in top_n_docs)
+        # top_n_docs = self._get_top_n_docs(scores, Engine.NUM_RESULTS)
+        return " ".join(str(x) for x in scores.keys())

@@ -12,14 +12,14 @@ DEBUG_LIMIT = 100
 
 def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
     training_files = sorted(os.listdir(training_data_dir),
-                            key=lambda x: int(x))
+                            key=lambda x: x)
     if is_debug:
         training_files = training_files[:DEBUG_LIMIT]
 
     dictionary = Dictionary(dictionary_file)
     postings = Postings(postings_file)
     for training_file in training_files:
-        doc_id = int(training_file)
+        doc_id = training_file
         doc_path = osp.join(training_data_dir, training_file)
         add_doc_to_index(doc_id, doc_path, dictionary, postings)
     postings.save()

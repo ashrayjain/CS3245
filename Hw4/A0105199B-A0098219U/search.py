@@ -1,6 +1,8 @@
 import argparse
 from utils import preprocess_text
-from search_engine import Engine, IPCEngine
+import xml.etree.ElementTree as et
+from search_engine import IPCEngine
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -15,15 +17,22 @@ parser.add_argument('--debug', dest='debug', default=False,
                     action='store_true', help='debug mode')
 args = parser.parse_args()
 
-with open(args.queries, 'r') as fq:
-    with open(args.output, 'w') as fo:
-        #engine = Engine(args.dictionary, args.postings)
-        engine = IPCEngine()
-        for query in fq:
-            query_map = preprocess_text(query)
+to_strip = "Relevant documents will describe "
 
-            result = engine.execute_query(query_map)
-            if result is None:
-                fo.write('\n')
-            else:
-                fo.write(str(result).strip() + '\n')
+with open(args.queries, 'r') as fq:
+    text = fq.read()
+    root = et.fromstring(text)
+    t = ""
+    for child in root:
+        text = child.text.replace(to_strip, "")
+        t += "\n" + text.strip()
+    query_map = preprocess_text(t)
+
+
+with open(args.output, 'w') as fo:
+    engine = IPCEngine()
+    result = engine.execute_query(query_map)
+    if result is None:
+        fo.write('\n')
+    else:
+        fo.write(str(result.replace(".xml", "")).strip() + '\n')

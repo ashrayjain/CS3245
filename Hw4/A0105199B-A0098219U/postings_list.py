@@ -22,7 +22,7 @@ class PostingsList(object):
     def add_from_string(self, string):
         for entry in string.split("|"):
             x, y = entry.split(" ")
-            self._entries.append((int(x), float(y)))
+            self._entries.append((x, float(y)))
 
     def reset(self):
         self._idx = -1
