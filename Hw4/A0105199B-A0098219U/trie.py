@@ -28,10 +28,30 @@ def init(filepath):
 
   ipc_trie = trie.CharTrie(IPC_Dict)
 
+def find_longest_prefixes(prefix):
+  pos = 0;
+  count = len(ipc_trie.items(prefix[:pos]));
+  while(count > 0 and pos < len(prefix)):
+    try:
+      pos += 1
+      count = len(ipc_trie.items(prefix[:pos]));
+    except KeyError:
+      # prefix[:pos] doesn't exist anymore hence, return prefix[:pos - 1]
+      break
+  return prefix[:pos - 1]
+
+
 def getfiles(prefix):
   if not ipc_trie:
     raise LookupError("Call init first")
 
-  file_sets = ipc_trie.values(prefix)
-  file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
+  if prefix in ipc_trie:
+    file_sets = ipc_trie.values(prefix)
+    file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
+  else:
+    longest_prefix = find_longest_prefixes(prefix)
+    prefixes = ipc_trie.keys(longest_prefix)
+    file_sets = map(getfiles, prefixes)
+    file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
+
   return file_sets_union
