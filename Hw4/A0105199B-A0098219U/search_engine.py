@@ -15,7 +15,7 @@ class IPCEngine(object):
         ipc_codes = []
         
         for qw in query_map:
-            ipc_codes.append(self.ipc_index.get(qw))
+            ipc_codes.extend(self.ipc_index.get(qw))
             ipc_codes = list(set(ipc_codes))
 
         results = set([])
