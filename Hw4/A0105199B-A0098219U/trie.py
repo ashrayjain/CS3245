@@ -11,6 +11,8 @@ def init(filepath):
   files = os.listdir(filepath)
 
   for file in files:
+    if file == '.DS_Store':
+      continue
     try:
       doc = ET.parse(filepath + file).getroot()
       IPCs = doc.find('str/[@name="All IPC"]').text.strip()
