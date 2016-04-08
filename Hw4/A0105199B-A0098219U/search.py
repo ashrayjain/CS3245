@@ -1,6 +1,6 @@
 import argparse
 from utils import preprocess_text
-from search_engine import Engine
+from search_engine import Engine, IPCEngine
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -17,7 +17,8 @@ args = parser.parse_args()
 
 with open(args.queries, 'r') as fq:
     with open(args.output, 'w') as fo:
-        engine = Engine(args.dictionary, args.postings)
+        #engine = Engine(args.dictionary, args.postings)
+        engine = IPCEngine()
         for query in fq:
             query_map = preprocess_text(query)
 
