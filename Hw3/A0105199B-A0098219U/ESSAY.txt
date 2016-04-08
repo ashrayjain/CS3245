@@ -1,0 +1,42 @@
+Replace this file with the answers to the essay questions here.
+----------------------------------------------------------------------
+
+1. In this assignment, we didn't ask you to support phrasal queries, which is a feature that is typically supported in web search engines. Describe how you would support phrasal search in conjunction with the VSM model. A sketch of the algorithm is sufficient. (For those of you who like a challenge, please go ahead and implement this feature in your submission but clearly demarcate it in your code and allow this feature to be turned on or off using the command line switch "-x" (where "-x" means to turn on the extended processing of phrasal queries). We will give a small bonus to submissions that achieve this functionality correctly).
+
+- Positional Index
+-- Idea: Maintain positional information in postings, and either choose to only add results in order or boost their scores.
+-- Cons: Space inefficient (as they are positional indexes), and needs additional computation to determine chaining.
+
+- Biword 'terms'
+-- Idea: Dictionary terms are now words + biwords. Query can be converted to this format easily.
+-- Cons: Number of vectors increase from |V| to |V|^2 + |V|. Searches may not be entirely accurate for > 2 word phrases, but likely to be more useful (as discussed in earlier weeks).
+
+2. Describe how your search engine reacts to long documents and long queries as compared to short documents and queries. Is the normalization you use sufficient to address the problems (see Section 6.4.4 for a hint)? In your judgement, is the ltc.lnc scheme (n.b., not the ranking scheme you were asked to implement) sufficient for retrieving documents from the Reuters-21578 collection?
+
+Given two docs, one shorter and one longer, if the term frequency is the same for the query terms, the longer doc will be less relevant due to the normalization length (denominator) being higher for the longer doc. However, for shorter documents with higher term frequency of the query terms, this could make the shorter doc more relevant. So, the term frequency affects the numerator whereas the no. of distinct terms affects the denominator.
+
+For example, the query "reagan" produces the following output: "11496 7528 11421 11444 2524 3204 6494 7529 7611 2452"
+
+Doc ID              Doc Length (vector magnitude)       Term frequency
+11496               4.31502833662                       2
+7528                4.50690010932                       2
+11421               4.60283236297                       2
+11444               9.14964159692                       3
+2524                8.14358651599                       2
+3204                9.51143049767                       3
+6494                9.61369665163                       3
+7529                11.4631513885                       5
+7611                11.4631513885                       5
+2452                9.56562598361                       2
+
+From the above table it is clear how longer docs with similar term frequency (even slightly higher) are ranked below shorter docs.
+To fix this issue, we can use the pivoted doc length normalization scheme from the book.
+
+The ltc.lnc scheme is very similar to the scheme we implemented. Since we multiply the tf and idf values and then multiply the
+values for the query and the document together, having the idf component for the query or the document would be comparable.
+Hence, in our judgement, it should be sufficient for retrieving docs from the reuters collection.
+
+
+3. Do you think zone or field parametric indices would be useful for practical search in the Reuters collection? Note: the Reuters collection does have metadata for each article but the quality of the metadata is not uniform, nor are the metadata classifications uniformly applied (some documents have it, some don't). Hint: for the next Homework #4, we will be using field metadata, so if you want to base Homework #4 on your Homework #3, you're welcomed to start support of this early (although no extra credit will be given if it's right).
+
+Yes, zone or field parametric indices would be useful for searching by specific parameters like "Author", "Date" etc. in the context of the Reuters collection. Even if the quality of the metadata is non uniform, it can still be beneficial to the end user. The end user can use it to try to reach the results they want quicker. However, since the metadata quality can be questionable, recall might suffer for some queries, which maybe ok depending on the context. 

@@ -1,0 +1,20 @@
+Replace this file with the answers to the essay questions here.
+----------------------------------------------------------------------
+
+1. You will observe that a large portion of the terms in the dictionary are numbers. However, we normally do not use numbers as query terms to search. Do you think it is a good idea to remove these number entries from the dictionary and the postings lists? Can you propose methods to normalize these numbers? How many percentage of reduction in disk storage do you observe after removing/normalizing these numbers?
+
+This answer depends on the domain in which the engine will be used. Since this engine operates on the Reuters database, it is possible that people using it will be interested to search for numbers directly, eg dates, etc. If not needed, these can be dropped from the dictionary and postings lists to reduce noise and save more data.
+The numbers present in the dictionary usually contain decimal places and commas. eg "1.234" or "212,423". These could be easily normalized by using some regex based approach. There are some other edge cases which might need special treatment.
+
+Removing all numbers of the above form gets rid of about a third of the dictionary terms and postings list.
+
+
+2. What do you think will happen if we remove stop words from the dictionary and postings file? How does it affect the searching phase?
+
+Removing stop words will help with the size of the dictionary and the postings file (more so for the postings file). However, first off, the searching phase will need to handle the case when the input query contains a stop word. We could ignore this term and remove it from the query, or assume that all documents contain that term. Also, since we use lower casing, some stop words might overlap with acronyms and it might become difficult to handle queries from users searching for them.
+
+
+3. The NLTK tokenizer may not correctly tokenize all terms. What do you observe from the resulting terms produced by sent_tokenize() and word_tokenize()? Can you propose rules to further refine these results?
+
+The tokenizer seems to keep hyphens and slashes in between words eg. 'and/the' or 'money-loser'. Another tokenizer could possible break these up. Also, the NTLK tokenizer is smart enough to keep the punctuation (commas, periods) for numbers and not for others. Another issue is terms like "'ll'". The tokenizer breaks up apostrophes and terms like "'ll'" really dont add much value.
+Possible rules to refine this could be domain-specific rules that handle hyphens and slashes properly.
