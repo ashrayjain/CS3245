@@ -6,14 +6,16 @@ from utils import tf
 from ipc import IPCIndex
 import trie
 
+
 class IPCEngine(object):
+
     def __init__(self):
         self.ipc_index = IPCIndex('ipc_index.txt')
         trie.init('./patsnap-corpus/')
-        
+
     def execute_query(self, query_map):
         ipc_codes = []
-        
+
         for qw in query_map:
             ipc_codes.extend(self.ipc_index.get(qw))
             ipc_codes = list(set(ipc_codes))
@@ -27,6 +29,7 @@ class IPCEngine(object):
         results = list(results)
         results = map(results, lambda x: x[:-4])
         return " ".join([str(x) for x in results])
+
 
 class Engine(object):
 

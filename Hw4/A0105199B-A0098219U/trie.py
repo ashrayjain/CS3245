@@ -4,56 +4,46 @@ import pygtrie as trie
 
 ipc_trie = None
 
+
 def init(filepath):
-  global ipc_trie
-  IPC_Dict = dict()
+    global ipc_trie
+    IPC_Dict = {}
+    files = os.listdir(filepath)
+    for f in files:
+        if f == '.DS_Store':
+            continue
+        doc = ET.parse(filepath + f).getroot()
+        ipc_node = doc.find('str/[@name="All IPC"]')
+        if ipc_node is not None:
+            ipcs = ipc_node.text.strip().split('|')
+            ipcs = map(lambda x: x.replace('/', '').strip(), ipcs)
+            for ipc in ipcs:
+                IPC_Dict.setdefault(ipc, set()).add(f)
+    ipc_trie = trie.CharTrie(IPC_Dict)
 
-  files = os.listdir(filepath)
-
-  for file in files:
-    if file == '.DS_Store':
-      continue
-    try:
-      doc = ET.parse(filepath + file).getroot()
-      IPCs = doc.find('str/[@name="All IPC"]').text.strip()
-      IPC_Raw_List = IPCs.split('|')
-      IPC_List = map(lambda x: x.replace('/', '').strip(), IPC_Raw_List)
-      for ipc in IPC_List:
-        if ipc not in IPC_Dict:
-          IPC_Dict[ipc] = set()
-        
-        IPC_Dict[ipc].add(file)
-    except AttributeError:
-      # All IPC field probably doesn't exist
-      # print file
-      pass
-
-  ipc_trie = trie.CharTrie(IPC_Dict)
 
 def find_longest_prefixes(prefix):
-  pos = 0;
-  count = len(ipc_trie.items(prefix[:pos]));
-  while(count > 0 and pos < len(prefix)):
-    try:
-      pos += 1
-      count = len(ipc_trie.items(prefix[:pos]));
-    except KeyError:
-      # prefix[:pos] doesn't exist anymore hence, return prefix[:pos - 1]
-      break
-  return prefix[:pos - 1]
+    longest_prefix = prefix in ipc_trie or ipc_trie.has_subtrie(prefix)
+    if longest_prefix:
+        return prefix
+    for i in xrange(-1, -len(prefix), -1):
+        temp_prefix = prefix[:i]
+        if temp_prefix in ipc_trie or ipc_trie.has_subtrie(temp_prefix):
+            return temp_prefix
+    return None
 
 
 def getfiles(prefix):
-  if not ipc_trie:
-    raise LookupError("Call init first")
+    if not ipc_trie:
+        raise LookupError("Call init first")
 
-  if prefix in ipc_trie:
-    file_sets = ipc_trie.values(prefix)
-    file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
-  else:
-    longest_prefix = find_longest_prefixes(prefix)
-    prefixes = ipc_trie.keys(longest_prefix)
-    file_sets = map(getfiles, prefixes)
-    file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
+    if prefix in ipc_trie:
+        file_sets = ipc_trie.values(prefix)
+        file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
+    else:
+        longest_prefix = find_longest_prefixes(prefix)
+        prefixes = ipc_trie.keys(longest_prefix)
+        file_sets = map(getfiles, prefixes)
+        file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
 
-  return file_sets_union
+    return file_sets_union
