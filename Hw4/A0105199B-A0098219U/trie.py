@@ -26,7 +26,7 @@ class Trie(object):
         for f in files:
             if f == '.DS_Store':
                 continue
-            doc = ET.parse(filepath + f).getroot()
+            doc = ET.parse(os.path.join(filepath, f)).getroot()
             ipc_node = doc.find('str/[@name="All IPC"]')
             if ipc_node is not None:
                 ipcs = ipc_node.text.strip().split('|')
