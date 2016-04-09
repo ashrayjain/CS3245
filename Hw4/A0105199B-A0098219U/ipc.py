@@ -11,7 +11,7 @@ class IPCIndex(object):
                 self.index[line[0]] = line[1:]
 
     def get(self, key):
-        return self.index[key]
+        return self.index.get(key, [])
 
 if __name__ == "__main__":
     index = IPCIndex('ipc_index.txt')
