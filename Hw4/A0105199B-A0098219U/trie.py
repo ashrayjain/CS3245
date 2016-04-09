@@ -1,8 +1,10 @@
 import os
+import re
 import xml.etree.ElementTree as ET
 import pygtrie as trie
 
 ipc_trie = None
+splitter = re.compile('[A-Z]')
 
 
 def init(filepath):
@@ -16,9 +18,14 @@ def init(filepath):
         ipc_node = doc.find('str/[@name="All IPC"]')
         if ipc_node is not None:
             ipcs = ipc_node.text.strip().split('|')
-            ipcs = map(lambda x: x.replace('/', '').strip(), ipcs)
             for ipc in ipcs:
-                IPC_Dict.setdefault(ipc, set()).add(f)
+                ipc_parts = ipc.strip().split('/')
+                split_len = len(ipc_parts[0]) - \
+                    splitter.search(ipc_parts[0][::-1]).span()[0]
+                normalized_ipc = ipc_parts[0][:split_len]
+                normalized_ipc += ipc_parts[0][split_len:].rjust(4, '0')
+                normalized_ipc += ipc_parts[1].ljust(6, '0')
+                IPC_Dict.setdefault(normalized_ipc, set()).add(f)
     ipc_trie = trie.CharTrie(IPC_Dict)
 
 
@@ -39,11 +46,8 @@ def getfiles(prefix):
 
     if prefix in ipc_trie:
         file_sets = ipc_trie.values(prefix)
-        file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
     else:
         longest_prefix = find_longest_prefixes(prefix)
-        prefixes = ipc_trie.keys(longest_prefix)
-        file_sets = map(getfiles, prefixes)
-        file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
-
+        file_sets = ipc_trie.values(longest_prefix)
+    file_sets_union = reduce(lambda x, y: x.union(y), file_sets)
     return file_sets_union
