@@ -1,7 +1,7 @@
 import os
 import re
 import xml.etree.ElementTree as ET
-import pygtrie as trie
+import pygtrie.pygtrie as trie
 import pickle
 
 
