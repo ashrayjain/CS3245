@@ -4,14 +4,14 @@ from dictionary import Dictionary
 from postings import Postings
 from utils import tf
 from ipc import IPCIndex
-import trie
+from trie import Trie
 
 
 class IPCEngine(object):
 
     def __init__(self):
         self.ipc_index = IPCIndex('ipc_index.txt')
-        trie.init('./patsnap-corpus/')
+        self.trie = Trie()
 
     def execute_query(self, query_map):
         ipc_codes = []
@@ -23,7 +23,7 @@ class IPCEngine(object):
         results = set([])
 
         for ipc_code in ipc_codes:
-            files = trie.getfiles(ipc_code)
+            files = self.trie.getfiles(ipc_code)
             results.update(files)
 
         results = list(results)

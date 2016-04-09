@@ -6,6 +6,7 @@ from math import sqrt
 from dictionary import Dictionary
 from postings import Postings
 from utils import preprocess_text, tf
+from trie import Trie
 
 DEBUG_LIMIT = 100
 
@@ -36,6 +37,9 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
         current_line += 1
     dictionary.generate_idf(len(training_files))
     dictionary.save()
+
+    trie = Trie(training_data_dir)
+    trie.save()
 
 
 def add_doc_to_index(doc_id, doc_path, d, p):
