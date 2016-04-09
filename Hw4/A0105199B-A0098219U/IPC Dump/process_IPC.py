@@ -1,6 +1,8 @@
 import os
-from .. import utils
+import sys
 import codecs
+sys.path.insert(1, os.path.join(sys.path[0], '..'))
+import utils
 
 index = {}
 
@@ -17,11 +19,11 @@ def process(fipc):
             ipclist.append(ipc)
             index[w] = ipclist
 
-for s, d, files in os.walk('./'):
+for s, d, files in os.walk('.'):
     for f in files:
         if f[:2] == 'EN':
             print 'Processing: ', f
-            with open(f) as fipc:
+            with open(os.path.join(s, f)) as fipc:
                 process(fipc)
 
     with codecs.open('ipc_index.txt', 'w', 'utf-8') as fout:
