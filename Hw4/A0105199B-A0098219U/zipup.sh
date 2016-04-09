@@ -2,7 +2,7 @@
 
 rm -rf ../A0098219U
 mkdir ../A0098219U
-cp *.py ipc_index.txt ../A0098219U/
+cp -r *.py ipc_index.txt ./pygtrie ../A0098219U/
 cd ..
 zip -R A0098219U.zip A0098219U/*
 cd A0098219U
