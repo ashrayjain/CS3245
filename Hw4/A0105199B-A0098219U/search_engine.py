@@ -27,7 +27,7 @@ class IPCEngine(object):
             results.update(files)
 
         results = list(results)
-        results = map(results, lambda x: x[:-4])
+        results = map(lambda x: x[:-4], results)
         return " ".join([str(x) for x in results])
 
 
