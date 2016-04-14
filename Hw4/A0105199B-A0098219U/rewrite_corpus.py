@@ -25,5 +25,5 @@ class CorpusProcessor(object):
                 ofname = f.split('.')[0] + '.txt'
                 opath = os.path.join(destination_dir, ofname)
 
-                with codecs.open(opath, 'w', 'utf-8') as fout:
+                with codecs.open(opath, 'w', 'ascii', errors='ignore') as fout:
                     fout.write(processed_file)
