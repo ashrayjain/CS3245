@@ -1,6 +1,7 @@
 import argparse
-from nltk import Text
+import nltk
 from nltk.text import ContextIndex
+from nltk.tokenize import word_tokenize
 from nltk.corpus import PlaintextCorpusReader
 from nltk.tokenize.treebank import TreebankWordTokenizer
 from nltk.tokenize import word_tokenize
@@ -31,7 +32,7 @@ def get_thesaurus():
                 '.*',
                 word_tokenizer=TreebankWordTokenizer())
 
-    thesaurus = Text(word.lower() for word in corpus.words())
+    thesaurus = nltk.Text(word.lower() for word in corpus.words())
     return thesaurus
 
 
@@ -77,11 +78,14 @@ with open(args.queries, 'r') as fq:
     for child in root:
         text = child.text.replace(to_strip, "")
         t += "\n" + text.strip()
-    # t = raw_preprocess_text(t)
-    # expanded_query = expand(t, thesaurus)
+
+    tagged = nltk.pos_tag(word_tokenize(t))
+    print tagged
+    t = raw_preprocess_text(t)
+    expanded_query = expand(t, thesaurus)
     # print "Query: ", t
     # print "Expanded: ", expanded_query
-    query_map = preprocess_text(t)
+    query_map = preprocess_text(expanded_query)
 
 
 with open(args.output, 'w') as fo:
