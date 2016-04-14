@@ -14,7 +14,7 @@ def xml_parse(text):
     for child in root:
         if child.attrib.get("name") in XML_CATEGORIES:
             t += "\n" + child.text.strip()
-    return preprocess_text(t)
+    return t
     # categorized_text = {}
     # for category, category_text in categorized_text.items():
     #     category = category.lower()

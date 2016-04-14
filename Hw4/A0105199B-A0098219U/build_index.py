@@ -38,8 +38,8 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
     dictionary.generate_idf(len(training_files))
     dictionary.save()
 
-    trie = Trie(training_data_dir)
-    trie.save()
+    #trie = Trie(training_data_dir)
+    #trie.save()
 
 
 def add_doc_to_index(doc_id, doc_path, d, p):
