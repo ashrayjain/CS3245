@@ -2,7 +2,7 @@
 
 rm -rf ../A0098219U
 mkdir ../A0098219U
-cp -R pygtrie *.py ipc_index.txt ../A0098219U/
+cp -R pygtrie *.py ipc_index.txt stop_words.txt ../A0098219U/
 cd ..
 zip -R A0098219U.zip A0098219U/pygtrie/* A0098219U/*
 cd A0098219U

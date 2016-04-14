@@ -4,8 +4,7 @@ from nltk.text import ContextIndex
 from nltk.tokenize import word_tokenize
 from nltk.corpus import PlaintextCorpusReader
 from nltk.tokenize.treebank import TreebankWordTokenizer
-from nltk.tokenize import word_tokenize
-from utils import preprocess_text, raw_preprocess_text
+from utils import preprocess_text, raw_preprocess_text, pos_filter_text
 from nltk.compat import Counter
 import xml.etree.ElementTree as et
 from search_engine import Engine
@@ -52,7 +51,6 @@ def similar(word, thesaurus, num=20):
         words = [w for w, _ in fd.most_common(num)]
         return words
     else:
-        print "No matches", word
         return None
 
 
@@ -78,14 +76,13 @@ with open(args.queries, 'r') as fq:
     for child in root:
         text = child.text.replace(to_strip, "")
         t += "\n" + text.strip()
-
-    tagged = nltk.pos_tag(word_tokenize(t))
-    print tagged
-    t = raw_preprocess_text(t)
-    expanded_query = expand(t, thesaurus)
-    # print "Query: ", t
-    # print "Expanded: ", expanded_query
-    query_map = preprocess_text(expanded_query)
+    print t
+    filtered_query = pos_filter_text(t)
+    filtered_query = raw_preprocess_text(filtered_query)
+    expanded_query = expand(filtered_query, thesaurus)
+    print "Query: ", filtered_query
+    print "Expanded: ", expanded_query
+    query_map = preprocess_text(filtered_query)
 
 
 with open(args.output, 'w') as fo:

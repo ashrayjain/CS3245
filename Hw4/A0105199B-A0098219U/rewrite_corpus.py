@@ -1,6 +1,7 @@
 import os
 import codecs
-from utils import xml_parse, raw_preprocess_text
+from utils import xml_parse, raw_preprocess_text, pos_filter_text
+
 
 class CorpusProcessor(object):
 
@@ -10,7 +11,7 @@ class CorpusProcessor(object):
     def xml_to_text(self, destination_dir):
         if not os.path.exists(destination_dir):
             os.makedirs(destination_dir)
-        
+
         for root, dirs, files in os.walk(self.initial_dir):
             for f in files:
                 fdata = ''
@@ -20,7 +21,8 @@ class CorpusProcessor(object):
                 with open(inpath, 'r') as fin:
                     fdata = fin.read().decode('utf-8')
 
-                processed_file = raw_preprocess_text(xml_parse(fdata))
+                processed_file = raw_preprocess_text(
+                    pos_filter_text(xml_parse(fdata)))
 
                 ofname = f.split('.')[0] + '.xml'
                 opath = os.path.join(destination_dir, ofname)

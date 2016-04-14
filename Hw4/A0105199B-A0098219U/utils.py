@@ -1,11 +1,13 @@
 from math import log10
 
 import xml.etree.ElementTree as et
+import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
 
 STEMMER = PorterStemmer()
 XML_CATEGORIES = ["Title", "Abstract"]
+stop_words = set(open("stop_words.txt").read().split('\n'))
 
 
 def xml_parse(text):
@@ -26,6 +28,13 @@ def xml_parse(text):
 
 def raw_preprocess_text(text):
     return " ".join(STEMMER.stem(w).lower() for w in word_tokenize(text))
+
+
+def pos_filter_text(text):
+    text = nltk.pos_tag(word_tokenize(text))
+    text = " ".join(k for k, v in text if v.startswith("NN") or
+                    v.startswith("VB"))
+    return " ".join(w for w in word_tokenize(text) if w.lower() not in stop_words)
 
 
 def preprocess_text(text):
