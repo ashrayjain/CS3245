@@ -24,6 +24,10 @@ def xml_parse(text):
     #         v[key] = v.get(key, 0) + 1
 
 
+def raw_preprocess_text(text):
+    return " ".join(STEMMER.stem(w).lower() for w in word_tokenize(text))
+
+
 def preprocess_text(text):
     v = {}
     for w in word_tokenize(text):

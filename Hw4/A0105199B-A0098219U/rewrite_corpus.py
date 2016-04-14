@@ -1,6 +1,6 @@
 import os
 import codecs
-from utils import xml_parse
+from utils import xml_parse, raw_preprocess_text
 
 class CorpusProcessor(object):
 
@@ -20,7 +20,7 @@ class CorpusProcessor(object):
                 with open(inpath, 'r') as fin:
                     fdata = fin.read().decode('utf-8')
 
-                processed_file = xml_parse(fdata)
+                processed_file = raw_preprocess_text(xml_parse(fdata))
 
                 ofname = f.split('.')[0] + '.txt'
                 opath = os.path.join(destination_dir, ofname)
