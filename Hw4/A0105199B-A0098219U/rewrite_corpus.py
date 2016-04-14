@@ -22,7 +22,7 @@ class CorpusProcessor(object):
 
                 processed_file = raw_preprocess_text(xml_parse(fdata))
 
-                ofname = f.split('.')[0] + '.txt'
+                ofname = f.split('.')[0] + '.xml'
                 opath = os.path.join(destination_dir, ofname)
 
                 with codecs.open(opath, 'w', 'ascii', errors='ignore') as fout:

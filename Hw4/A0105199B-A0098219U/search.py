@@ -32,11 +32,6 @@ def get_thesaurus():
                 word_tokenizer=TreebankWordTokenizer())
 
     thesaurus = Text(word.lower() for word in corpus.words())
-    print "Test: ", thesaurus.similar("bubble")
-    print "Expanded: ", thesaurus.similar("bubbl")
-    print "TEST: ", similar("bubbl", thesaurus)
-    print "TEST: ", similar("bubbl", thesaurus)
-    print "TEST: ", similar("bubbl", thesaurus)
     return thesaurus
 
 
@@ -47,31 +42,30 @@ def similar(word, thesaurus, num=20):
             key=lambda s: s.lower()
         )
 
-        word = word.lower()
-        wci = thesaurus._word_context_index._word_to_contexts
-        if word in wci.conditions():
-            contexts = set(wci[word])
-            fd = Counter(w for w in wci.conditions() for c in wci[w]
-                         if c in contexts and not w == word)
-            words = [w for w, _ in fd.most_common(num)]
-            return words
-        else:
-            print "No matches", word
-            return None
+    word = word.lower()
+    wci = thesaurus._word_context_index._word_to_contexts
+    if word in wci.conditions():
+        contexts = set(wci[word])
+        fd = Counter(w for w in wci.conditions() for c in wci[w]
+                     if c in contexts and not w == word)
+        words = [w for w, _ in fd.most_common(num)]
+        return words
+    else:
+        print "No matches", word
+        return None
 
 
 def expand(query, thesaurus):
     additional_terms = []
     for w in set(word_tokenize(query)):
-        print "Word: ", w
+        # print "Word: ", w
         similar_terms = similar(w, thesaurus)
-        print similar_terms
+        # print similar_terms
         if similar_terms:
             additional_terms += similar_terms
-            print additional_terms
+            # print additional_terms
 
     query += " ".join(additional_terms)
-
     return query
 
 with open(args.queries, 'r') as fq:
@@ -83,11 +77,11 @@ with open(args.queries, 'r') as fq:
     for child in root:
         text = child.text.replace(to_strip, "")
         t += "\n" + text.strip()
-    t = raw_preprocess_text(t)
-    expanded_query = expand(t, thesaurus)
-    print "Query: ", t
-    print "Expanded: ", expanded_query
-    query_map = preprocess_text(expanded_query)
+    # t = raw_preprocess_text(t)
+    # expanded_query = expand(t, thesaurus)
+    # print "Query: ", t
+    # print "Expanded: ", expanded_query
+    query_map = preprocess_text(t)
 
 
 with open(args.output, 'w') as fo:
