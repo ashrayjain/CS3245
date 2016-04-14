@@ -7,7 +7,8 @@ from nltk.tokenize.treebank import TreebankWordTokenizer
 from utils import preprocess_text, raw_preprocess_text, pos_filter_text
 from nltk.compat import Counter
 import xml.etree.ElementTree as et
-from search_engine import Engine
+# from search_engine import Engine as se
+from search_engine import feedbackEngine as se
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -82,11 +83,12 @@ with open(args.queries, 'r') as fq:
     expanded_query = expand(filtered_query, thesaurus)
     print "Query: ", filtered_query
     print "Expanded: ", expanded_query
-    query_map = preprocess_text(filtered_query)
+    # query_map = preprocess_text(filtered_query)
+    query_map = preprocess_text(expanded_query)
 
 
 with open(args.output, 'w') as fo:
-    engine = Engine(args.dictionary, args.postings)
+    engine = se(args.dictionary, args.postings)
     result = engine.execute_query(query_map)
     if result is None:
         fo.write('\n')
