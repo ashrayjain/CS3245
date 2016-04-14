@@ -6,29 +6,46 @@ from utils import tf
 from ipc import IPCIndex
 from trie import Trie
 
+#Varun's imports
+import pickle
+from utils import preprocess_text
+from nltk.corpus import stopwords
+stop = stopwords.words('english')
+stop_preprocessed = [preprocess_text(w).popitem()[0] for w in stop]
+
 
 class IPCEngine(object):
 
     def __init__(self):
         self.ipc_index = IPCIndex('ipc_index.txt')
+        with open("patent_query_data", "rb") as f:
+                self.data_dict = pickle.load(f)
         self.trie = Trie()
 
     def execute_query(self, query_map):
-        ipc_codes = []
-
+        patent_results = set()
         for qw in query_map:
-            ipc_codes.extend(self.ipc_index.get(qw))
-            ipc_codes = list(set(ipc_codes))
-
-        results = set([])
-
-        for ipc_code in ipc_codes:
-            files = self.trie.getfiles(ipc_code)
-            results.update(files)
-
-        results = list(results)
-        results = map(lambda x: x[:-4], results)
+            if qw not in stop_preprocessed and qw in self.data_dict:
+                patent_results.update(self.data_dict[qw])
+        results = list(patent_results)
         return " ".join([str(x) for x in results])
+
+    # def execute_query(self, query_map):
+    #     ipc_codes = []
+    #
+    #     for qw in query_map:
+    #         ipc_codes.extend(self.ipc_index.get(qw))
+    #         ipc_codes = list(set(ipc_codes))
+    #
+    #     results = set([])
+    #
+    #     for ipc_code in ipc_codes:
+    #         files = self.trie.getfiles(ipc_code)
+    #         results.update(files)
+    #
+    #     results = list(results)
+    #     results = map(lambda x: x[:-4], results)
+    #     return " ".join([str(x) for x in results])
 
 
 class Engine(object):

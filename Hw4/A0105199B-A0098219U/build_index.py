@@ -8,6 +8,13 @@ from postings import Postings
 from utils import preprocess_text, tf
 from trie import Trie
 
+import pickle
+import xml.etree.ElementTree as et
+from utils import preprocess_text
+from nltk.corpus import stopwords
+stop = stopwords.words('english')
+stop_preprocessed = [preprocess_text(w).popitem()[0] for w in stop]
+
 DEBUG_LIMIT = 100
 
 
@@ -40,6 +47,35 @@ def build_index(training_data_dir, dictionary_file, postings_file, is_debug):
 
     trie = Trie(training_data_dir)
     trie.save()
+
+    # Varun's code to map query words in the patent doc to the patent id
+
+    data = dict()
+    for training_file in training_files:
+        doc = et.parse(osp.join(training_data_dir, training_file)).getroot()
+        patentnode = doc.find('str/[@name="Patent Number"]')
+        patentno = patentnode.text.strip()
+        titlenode = doc.find('str/[@name="Title"]')
+        if titlenode is not None:
+            title = titlenode.text.strip()
+            title_map = preprocess_text(title)
+            for word in title_map:
+                if word not in stop_preprocessed:
+                    data.setdefault(word, set()).add(patentno)
+
+        abstractnode = doc.find('str/[@name="Abstract"]')
+        if abstractnode is not None:
+            abstract = abstractnode.text.strip()
+            abstract_map = preprocess_text(abstract)
+            for word in title_map:
+                if word not in stop_preprocessed:
+                    data.setdefault(word, set()).add(patentno)
+
+    with open("patent_query_data", "wb") as f:
+        pickle.dump(data, f, -1)
+
+
+
 
 
 def add_doc_to_index(doc_id, doc_path, d, p):
