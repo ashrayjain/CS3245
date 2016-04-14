@@ -13,7 +13,7 @@ parser.add_argument('--debug', dest='debug', default=False,
                     action='store_true', help='debug mode')
 args = parser.parse_args()
 
-c_dir_new = args.input + '_processed'
+c_dir_new = 'processed_corpus'
 c_processor = CorpusProcessor(args.input)
 c_processor.xml_to_text(c_dir_new)
 
