@@ -76,23 +76,23 @@ with open(args.queries, 'r') as fq:
     for child in root:
         text = child.text.replace(to_strip, "")
         query_text += " " + text.strip()
-    print "Original: ", query_text
+    # print "Original: ", query_text
 
     verb_list = pos_verbs_filter(query_text)
     noun_list = pos_nouns_filter(query_text)
     
     sans_stop_words_list = stop_words_filter(query_text)
 
-    print "Verbs: ", verb_list
-    print "Nouns: ", noun_list
+    # print "Verbs: ", verb_list
+    # print "Nouns: ", noun_list
     noun_synonyms = set()
     for word in noun_list:
         noun_synonyms.update(get_noun_synonyms(word))
     query_text = " ".join(verb_list + noun_list + list(noun_synonyms) + sans_stop_words_list)
-    print "Query: ", query_text
+    # print "Query: ", query_text
 
     query_text = raw_preprocess_text(query_text)
-    print "Stemmed: ", query_text
+    # print "Stemmed: ", query_text
 
     # expanded_query = expand(filtered_query, thesaurus)
     # print "Expanded: ", query_text
