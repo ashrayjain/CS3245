@@ -23,11 +23,26 @@ class IPCEngine(object):
         self.trie = Trie()
 
     def execute_query(self, query_map):
+        ipc_codes = []
         patent_results = set()
         for qw in query_map:
-            if qw not in stop_preprocessed and qw in self.data_dict:
-                patent_results.update(self.data_dict[qw])
-        results = list(patent_results)
+            if qw not in stop_preprocessed:
+                ipc_codes.extend(self.ipc_index.get(qw))
+                ipc_codes = list(set(ipc_codes))
+                if qw in self.data_dict:
+                    patent_results.update(self.data_dict[qw])
+
+        results = set([])
+
+        for ipc_code in ipc_codes:
+            files = self.trie.getfiles(ipc_code)
+            results.update(files)
+
+        results = list(results)
+        results = map(lambda x: x[:-4], results)
+        results = set(results)
+        results.update(patent_results)
+        results = list(results)
         return " ".join([str(x) for x in results])
 
     # def execute_query(self, query_map):
