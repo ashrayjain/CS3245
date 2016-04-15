@@ -34,3 +34,4 @@ with open(fpos) as fp, open(fneg) as fn, open(fout) as fo:
 
     print "Missing:", sorted(x for x in pos if x not in ppres)
     print "Extra:", sorted(x for x in fpres if x in neg)
+    print 'Total Count:', str(len(output))
