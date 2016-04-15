@@ -1,5 +1,6 @@
 import argparse
 from build_index import build_index
+from hack_index import build_index as hack_index
 from rewrite_corpus import CorpusProcessor
 
 parser = argparse.ArgumentParser()
@@ -19,4 +20,4 @@ c_processor.xml_to_text(c_dir_new)
 
 build_index(c_dir_new, args.dictionary, args.postings, args.debug)
 
-# build_index(args.input)
+hack_index(args.input)
