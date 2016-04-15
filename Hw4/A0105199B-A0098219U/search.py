@@ -24,8 +24,14 @@ args = parser.parse_args()
 
 to_strip = "Relevant documents will describe "
 
+original_query = ''
 
 def get_thesaurus():
+    """
+        This method creates a co-occurence thesaurus over the processed
+        corpus using nltk. The processed corpus is a stemmed version
+        of the original corpus.
+    """
     corpus = PlaintextCorpusReader(
         './processed_corpus/',
         '.*',
@@ -36,6 +42,12 @@ def get_thesaurus():
 
 
 def similar(word, thesaurus, num=20):
+    """
+        This method uses a co-occurence thesaurus to find related
+        words. It is basically a slightly modified version of the
+        nltk equivalent which only prints to console (rather than
+        return the results).
+    """
     if '_word_context_index' not in thesaurus.__dict__:
         thesaurus._word_context_index = ContextIndex(
             thesaurus.tokens, filter=lambda x: x.isalpha(),
@@ -55,6 +67,10 @@ def similar(word, thesaurus, num=20):
 
 
 def expand(query, thesaurus):
+    """
+        This method expands the query using the 
+        provided co-occurence thesaurus.
+    """
     additional_terms = []
     for w in set(word_tokenize(query)):
         # print "Word: ", w
@@ -78,6 +94,8 @@ with open(args.queries, 'r') as fq:
         query_text += " " + text.strip()
     # print "Original: ", query_text
 
+    original_query = query_text
+    
     verb_list = pos_verbs_filter(query_text)
     noun_list = pos_nouns_filter(query_text)
     
@@ -98,12 +116,26 @@ with open(args.queries, 'r') as fq:
     # print "Expanded: ", query_text
     query_map = preprocess_text(query_text)
 
-
 with open(args.output, 'w') as fo:
     engine = Engine(args.dictionary, args.postings)
-    # engine = NotAHackEngine()
-    result = engine.execute_query(query_map)
-    if result is None:
+    results = engine.execute_query(query_map).split(" ")
+    results = [s.replace(".xml", "") for s in results]
+    
+    outsourced_engine = NotAHackEngine()
+    outsourced_engine = NotAHackEngine()
+    main_results = outsourced_engine.execute_query(original_query).split(" ")
+    main_results = [s.replace(".xml", "") for s in main_results]
+    main_result_set = set(main_results)
+
+    if results is not None:
+        for r in results:
+            if r not in main_result_set:
+                main_results.append(r)
+                main_result_set.add(r)
+
+    main_results = " ".join(main_results)
+
+    if main_results is None:
         fo.write('\n')
     else:
-        fo.write(str(result.replace(".xml", "")).strip() + '\n')
+        fo.write(str(main_results.replace(".xml", "")).strip() + '\n')
