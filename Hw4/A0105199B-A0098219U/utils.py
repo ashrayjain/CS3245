@@ -59,8 +59,6 @@ def idf(val, n):
 def get_synonyms(word):
     output = set()
     for sense in wn.synsets(word):
-        print sense
-        print sense.lemma_names()
         output.update(sense.lemma_names())
 
     return list(output)
@@ -69,8 +67,6 @@ def get_noun_synonyms(word):
     output = set()
     for sense in wn.synsets(word):
         if sense.name().split('.')[1] == 'n':
-            print sense
-            print sense.lemma_names()
             output.update(sense.lemma_names())
 
     return list(output)
