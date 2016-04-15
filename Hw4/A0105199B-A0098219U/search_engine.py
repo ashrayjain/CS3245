@@ -10,8 +10,10 @@ from ipc import IPCIndex
 from trie import Trie
 import copy
 
-# engine based on IPC classification based retrieval
 class IPCEngine(object):
+    """
+    Search engine that uses IPC classification to retrieve patents
+    """
 
     def __init__(self):
         self.ipc_index = IPCIndex('ipc_index.txt')
@@ -35,8 +37,11 @@ class IPCEngine(object):
         results = map(lambda x: x[:-4], results)
         return " ".join([str(x) for x in results])
 
-# engine based on a web service based retrieval
+
 class NotAHackEngine(object):
+    """
+    Search engine that uses a web service to retrieve patents
+    """
 
     def __init__(self):
         with open('class_index.txt') as fin:
@@ -67,8 +72,10 @@ class NotAHackEngine(object):
                     outputset.add(doc)
         return " ".join(output)
 
-# engine based on vector space model based retrieval
 class Engine(object):
+    """
+    Search engine that uses a simple vector space model to retrieve patents
+    """
 
     NUM_RESULTS = 500
 
@@ -76,29 +83,39 @@ class Engine(object):
         self.dictionary = Dictionary(fd, load=True)
         self.postings = Postings(fp, mode='r')
 
-    # get the postings list at an offset
-    def _get_postings(self, offset):
+   def _get_postings(self, offset):
+    """
+    This method gets the postings list at an offset
+    """
         return self.postings.list_at_offset(offset)
 
-    # accumulate scores for a term
     def _accumulate_scores(self, scores, postings_list, q_wt):
+    """
+    This method accumulates scores for a term
+    """
         for doc_id, d_tf in postings_list:
             scores[doc_id] = scores.get(doc_id, 0) + q_wt * d_tf
 
-    # normalise scores for every document
     def _normalize(self, scores, q_len):
+    """
+    This method normalises scores for every document
+    """
         for doc_id in scores:
             scores[doc_id] /= (q_len * self.dictionary.doc_length(doc_id))
 
-    # create a heap of the docs and pick out the top few
     def _get_top_n_docs(self, scores, n):
+    """
+    This method creates a heap of the docs and pick out the top few
+    """
         scores_heap = [(-v, k) for k, v in scores.items()]
         heapq.heapify(scores_heap)
         return [heapq.heappop(scores_heap)[1] for i in xrange(n)
                 if len(scores_heap) > 0]
 
-    # main function called to execute a query
     def execute_query(self, query_map):
+    """
+    This is the method called to execute a query
+    """
         scores = {}
         for term in query_map:
             q_idf, term_offset = self.dictionary.term(term)
@@ -122,8 +139,11 @@ class Engine(object):
 
         return " ".join(str(x) for x in scores.keys())
 
-# engine based on relevance feedback retrieval
 class feedbackEngine(object):
+"""
+Search engine that uses relevance feedback
+with a vector space model to retrieve patents
+"""
 
     global NUM_RESULTS
     global QUERY_WEIGHT
@@ -137,29 +157,39 @@ class feedbackEngine(object):
         self.postings = Postings(fp, mode='r')
         self.feedback = False
 
-    # get the postings list at an offset
     def _get_postings(self, offset):
+    """
+    This method gets the postings list at an offset
+    """
         return self.postings.list_at_offset(offset)
 
-    # accumulate scores for a term
     def _accumulate_scores(self, scores, postings_list, q_wt):
+    """
+    This method accumulates scores for a term
+    """
         for doc_id, d_tf in postings_list:
             scores[doc_id] = scores.get(doc_id, 0) + q_wt * d_tf
 
-    # normalise scores for every document
     def _normalize(self, scores, q_len):
+    """
+    This method normalises scores for every document
+    """
         for doc_id in scores:
             scores[doc_id] /= (q_len * self.dictionary.doc_length(doc_id))
 
-    # create a heap of the docs and pick out the top few
     def _get_top_n_docs(self, scores, n):
+    """
+    This method creates a heap of the docs and pick out the top few
+    """
         scores_heap = [(-v, k) for k, v in scores.items()]
         heapq.heapify(scores_heap)
         return [heapq.heappop(scores_heap)[1] for i in xrange(n)
                 if len(scores_heap) > 0]
 
-    # expand the query based on pseudo relevance feedback
     def relevance_feedback(self, query_map, top_n_docs):
+    """
+    This method expands the query based on pseudo relevance feedback
+    """
         self.feedback = True
         vector_sum = {}
         term_dict = self.dictionary._terms
@@ -206,8 +236,10 @@ class feedbackEngine(object):
         # execute query with the new query vector
         return self.execute_query(vector_sum)
 
-    # main function called to execute a query
     def execute_query(self, query_map):
+    """
+    This is the method called to execute a query
+    """
         scores = {}
         query_map_copy = copy.deepcopy(query_map)
         for term in query_map:
