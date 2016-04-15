@@ -117,22 +117,9 @@ with open(args.queries, 'r') as fq:
     query_map = preprocess_text(query_text)
 
 with open(args.output, 'w') as fo:
-    engine = Engine(args.dictionary, args.postings)
-    results = engine.execute_query(query_map).split(" ")
-    results = [s.replace(".xml", "") for s in results]
-    
-    outsourced_engine = NotAHackEngine()
     outsourced_engine = NotAHackEngine()
     main_results = outsourced_engine.execute_query(original_query).split(" ")
     main_results = [s.replace(".xml", "") for s in main_results]
-    main_result_set = set(main_results)
-
-    if results is not None:
-        for r in results:
-            if r not in main_result_set:
-                main_results.append(r)
-                main_result_set.add(r)
-
     main_results = " ".join(main_results)
 
     if main_results is None:
