@@ -48,7 +48,8 @@ STEP 2: For each of the 5 categories, we retrieve all the documents from the pat
 
 Performance: Above Baseline with average F2 = 0.421452312860265
 
-Comments: Not only does this approach return fewer but more relevant patent numbers, it also has some degree of document ranking. This is because documents referencing the top IPC category from WIPO's tool are returned before documents that reference the bottom IPC category.
+Comments: Not only does this approach return fewer but more relevant patent numbers, it also has some degree of document ranking. This is because documents referencing the top IPC category from WIPO's tool are returned before documents that reference the bottom IPC category. However, the results suffer for query 3 and query 4 because the provided corpus doesn't contain (enough) patents for the categories that these queries map to.
+
 
 
 == Files included with this submission ==
