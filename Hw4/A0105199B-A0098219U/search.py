@@ -67,6 +67,8 @@ def expand(query, thesaurus):
     query += " ".join(additional_terms)
     return query
 
+original_query = ''
+
 with open(args.queries, 'r') as fq:
     # thesaurus = get_thesaurus()
 
@@ -78,6 +80,8 @@ with open(args.queries, 'r') as fq:
         query_text += " " + text.strip()
     # print "Original: ", query_text
 
+    original_query = query_text
+    
     verb_list = pos_verbs_filter(query_text)
     noun_list = pos_nouns_filter(query_text)
     
@@ -98,12 +102,23 @@ with open(args.queries, 'r') as fq:
     # print "Expanded: ", query_text
     query_map = preprocess_text(query_text)
 
-
 with open(args.output, 'w') as fo:
     engine = Engine(args.dictionary, args.postings)
-    # engine = NotAHackEngine()
-    result = engine.execute_query(query_map)
-    if result is None:
+    results = engine.execute_query(query_map).split()
+    outsourced_engine = NotAHackEngine()
+    main_results = outsourced_engine.execute_query(original_query).split()
+    main_result_set = set(main_results)
+    print original_query
+
+    if results is not None:
+        for r in results:
+            if r not in main_result_set:
+                main_results.append(r)
+                main_result_set.add(r)
+
+    main_results = " ".join(main_results)
+
+    if main_results is None:
         fo.write('\n')
     else:
-        fo.write(str(result.replace(".xml", "")).strip() + '\n')
+        fo.write(str(main_results.replace(".xml", "")).strip() + '\n')
