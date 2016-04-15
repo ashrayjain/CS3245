@@ -6,11 +6,16 @@ import pickle
 
 
 class Trie(object):
-
+    """
+    Trie to map a IPC code to a patent document in patsnap corpus. It utilizes the pygtrie library to store and retrieve patent documents corresponding to an IPC code.
+    """
     splitter = re.compile('[A-Z]')
     saved_filename = "trie_obj"
 
     def __init__(self, filepath=None):
+    """
+    Creates a new Trie object for the patsnap corpus from the filepath specified. If no filepath is specifed, it loads the previously created Trie object stored as a file.
+    """
         self.ipc_trie = None
         self.ipc_dict = None
         if filepath is None:
@@ -21,6 +26,9 @@ class Trie(object):
             self.create_trie(filepath)
 
     def create_trie(self, filepath):
+    """
+    Creates a new Trie object from the patsnap corpus directory specified in the filepath.
+    """ 
         self.ipc_dict = {}
         files = os.listdir(filepath)
         for f in files:
@@ -41,6 +49,9 @@ class Trie(object):
         self.ipc_trie = trie.CharTrie(self.ipc_dict)
 
     def find_longest_prefixes(self, prefix):
+    """
+    Returns the longest prefix of the specified IPC prefix contained in the Trie.  
+    """ 
         longest_prefix = prefix in self.ipc_trie or \
             self.ipc_trie.has_subtrie(prefix)
         if longest_prefix:
@@ -53,6 +64,9 @@ class Trie(object):
         return None
 
     def getfiles(self, prefix):
+    """
+    Returns all the a set of patent numbers that reference the IPC code given. If only a prefix of the IPC code is given, it returns all the patent documents referencing IPC codes starting with that prefix.  
+    """
         if not self.ipc_trie:
             raise LookupError("Call init first")
 
@@ -65,5 +79,8 @@ class Trie(object):
         return file_sets_union
 
     def save(self):
+    """
+    Saves the current Trie object to disk.
+    """ 
         with open(self.saved_filename, "wb") as f:
             pickle.dump(self.ipc_dict, f, -1)
