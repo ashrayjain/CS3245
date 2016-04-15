@@ -47,11 +47,13 @@ def stop_words_filter(text):
 
 def preprocess_text(text):
     v = {}
-    for w in word_tokenize(text):
-        word = STEMMER.stem(w).lower()
-        v[word] = v.get(word, 0) + 1
-    return v
-
+    try:
+        for w in word_tokenize(text):
+            word = STEMMER.stem(w).lower()
+            v[word] = v.get(word, 0) + 1
+        return v
+    except:
+        print text
 
 def tf(val):
     if val > 0:
