@@ -63,7 +63,8 @@ Comments: Not only does this approach return fewer but more relevant patent numb
 - argparse.py - argparse library for running on Sunfire
 - search.py - does the command line i/o and passes each query to search_engine.py for evaluation.
               Also writes the results to output file.
-- search_engine.py - runs the CosineScore algorithm on the input query and returns top 10 results
+- search_engine.py - runs the search engine algorithms on the input query and returns results
+- scrape_wipo.py - runs on external server to scrape WIPO.
 
 == Statement of individual work ==
 
