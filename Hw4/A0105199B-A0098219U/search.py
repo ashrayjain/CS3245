@@ -27,9 +27,9 @@ to_strip = "Relevant documents will describe "
 
 def get_thesaurus():
     corpus = PlaintextCorpusReader(
-                './processed_corpus/',
-                '.*',
-                word_tokenizer=TreebankWordTokenizer())
+        './processed_corpus/',
+        '.*',
+        word_tokenizer=TreebankWordTokenizer())
 
     thesaurus = nltk.Text(word.lower() for word in corpus.words())
     return thesaurus
@@ -68,7 +68,7 @@ def expand(query, thesaurus):
     return query
 
 with open(args.queries, 'r') as fq:
-#    thesaurus = get_thesaurus()
+    # thesaurus = get_thesaurus()
 
     text = fq.read()
     root = et.fromstring(text)
@@ -77,12 +77,12 @@ with open(args.queries, 'r') as fq:
         text = child.text.replace(to_strip, "")
         query_text += " " + text.strip()
 
-    #filtered_query = pos_filter_text(t)
-    #filtered_query = raw_preprocess_text(filtered_query)
-    #expanded_query = expand(filtered_query, thesaurus)
-    #print "Query: ", filtered_query
-    #print "Expanded: ", expanded_query
-    #query_map = preprocess_text(filtered_query)
+    filtered_query = pos_filter_text(t)
+    # filtered_query = raw_preprocess_text(filtered_query)
+    # expanded_query = expand(filtered_query, thesaurus)
+    # print "Query: ", filtered_query
+    # print "Expanded: ", expanded_query
+    # query_map = preprocess_text(filtered_query)
 
 
 with open(args.output, 'w') as fo:

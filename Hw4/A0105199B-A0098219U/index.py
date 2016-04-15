@@ -13,9 +13,9 @@ parser.add_argument('--debug', dest='debug', default=False,
                     action='store_true', help='debug mode')
 args = parser.parse_args()
 
-#c_dir_new = 'processed_corpus'
-#c_processor = CorpusProcessor(args.input)
-#c_processor.xml_to_text(c_dir_new)
+c_dir_new = 'processed_corpus'
+c_processor = CorpusProcessor(args.input)
+c_processor.xml_to_text(c_dir_new)
 
 #build_index(c_dir_new, args.dictionary, args.postings, args.debug)
 
