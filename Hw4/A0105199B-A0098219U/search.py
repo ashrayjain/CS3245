@@ -7,7 +7,7 @@ from nltk.tokenize.treebank import TreebankWordTokenizer
 from utils import *
 from nltk.compat import Counter
 import xml.etree.ElementTree as et
-from search_engine import Engine, NotAHackEngine
+from search_engine import Engine, NotAHackEngine, feedbackEngine
 
 parser = argparse.ArgumentParser()
 parser.add_argument('-d', '--dictionary', required=True,
@@ -103,7 +103,7 @@ with open(args.queries, 'r') as fq:
     query_map = preprocess_text(query_text)
 
 with open(args.output, 'w') as fo:
-    engine = Engine(args.dictionary, args.postings)
+    engine = feedbackEngine(args.dictionary, args.postings)
     results = engine.execute_query(query_map).split(" ")
     results = [s.replace(".xml", "") for s in results]
     outsourced_engine = NotAHackEngine()

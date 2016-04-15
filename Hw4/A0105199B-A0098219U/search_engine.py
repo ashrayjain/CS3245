@@ -8,7 +8,7 @@ from postings import Postings
 from utils import tf
 from ipc import IPCIndex
 from trie import Trie
-
+import copy
 
 class IPCEngine(object):
 
@@ -146,8 +146,9 @@ class feedbackEngine(object):
 
     def relevance_feedback(self, query_map, top_n_docs):
         self.feedback = True
-        centroid_positive = {}
+        vector_sum = {}
         term_dict = self.dictionary._terms
+
         for term in term_dict:
             term_offset = term_dict[term][1]
 
@@ -156,20 +157,14 @@ class feedbackEngine(object):
                 continue
 
             postings_list = self._get_postings(term_offset)
+
             for doc_id, d_tf in postings_list:
                 if doc_id in top_n_docs:
-                    temp_term_freq = {term: d_tf}
-                    centroid_positive[doc_id] = temp_term_freq
-
-        vector_sum = {}
-        # add the documents to the centroid vector
-        for doc_id in centroid_positive:
-            term_freq = centroid_positive[doc_id]
-            for term in term_freq:
-                if term in vector_sum:
-                    vector_sum[term] += term_freq[term]
-                else:
-                    vector_sum[term] = term_freq[term]
+                    temp_term_freq = d_tf*P_FEEDBACK_WEIGHT
+                    if term in vector_sum:
+                        vector_sum[term] += temp_term_freq
+                    else:
+                        vector_sum[term] = temp_term_freq
 
         # averaging the vector for the top docs
         for term in vector_sum:
@@ -178,18 +173,19 @@ class feedbackEngine(object):
 
         # adding the initial query vector
         for term in vector_sum:
-            # print term
             if term in query_map:
                 vector_sum[term] += query_map[term] * QUERY_WEIGHT
         # adding the remaining terms left in the query vector
         for term in query_map:
-            # print term
             if term not in vector_sum:
                 vector_sum[term] = query_map[term] * QUERY_WEIGHT
+                
         print "vector length"
         print len(vector_sum)
+        print vector_sum.keys()
         print "query length"
         print len(query_map)
+        print query_map.keys()
 
         # execute query with the new query vector
         return self.execute_query(vector_sum)
