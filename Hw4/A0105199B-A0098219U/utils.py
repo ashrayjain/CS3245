@@ -4,6 +4,7 @@ import xml.etree.ElementTree as et
 import nltk
 from nltk.tokenize import word_tokenize
 from nltk.stem.porter import PorterStemmer
+from nltk.corpus import wordnet as wn
 
 STEMMER = PorterStemmer()
 XML_CATEGORIES = ["Title", "Abstract"]
@@ -28,7 +29,6 @@ def xml_parse(text):
 
 def raw_preprocess_text(text):
     return " ".join(STEMMER.stem(w).lower() for w in word_tokenize(text))
-
 
 def pos_filter_text(text):
     text = nltk.pos_tag(word_tokenize(text))
@@ -55,3 +55,24 @@ def idf(val, n):
     if val == 0:
         return 0
     return log10(1.0 * n / val)
+
+def get_synonyms(word):
+    output = set()
+    for sense in wn.synsets(word):
+        print sense
+        print sense.lemma_names()
+        output.update(sense.lemma_names())
+
+    return list(output)
+
+def get_noun_synonyms(word):
+    output = set()
+    for sense in wn.synsets(word):
+        if sense.name().split('.')[1] == 'n':
+            print sense
+            print sense.lemma_names()
+            output.update(sense.lemma_names())
+
+    return list(output)
+
+
