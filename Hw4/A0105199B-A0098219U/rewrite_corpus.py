@@ -1,6 +1,6 @@
 import os
 import codecs
-from utils import xml_parse, raw_preprocess_text, pos_filter_text
+from utils import *
 
 
 class CorpusProcessor(object):

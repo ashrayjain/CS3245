@@ -4,7 +4,7 @@ from nltk.text import ContextIndex
 from nltk.tokenize import word_tokenize
 from nltk.corpus import PlaintextCorpusReader
 from nltk.tokenize.treebank import TreebankWordTokenizer
-from utils import preprocess_text, raw_preprocess_text, pos_filter_text
+from utils import *
 from nltk.compat import Counter
 import xml.etree.ElementTree as et
 from search_engine import Engine, NotAHackEngine
@@ -76,18 +76,33 @@ with open(args.queries, 'r') as fq:
     for child in root:
         text = child.text.replace(to_strip, "")
         query_text += " " + text.strip()
+    print "Original: ", query_text
 
-    filtered_query = pos_filter_text(t)
-    # filtered_query = raw_preprocess_text(filtered_query)
+    verb_list = pos_verbs_filter(query_text)
+    noun_list = pos_nouns_filter(query_text)
+    
+    sans_stop_words_list = stop_words_filter(query_text)
+
+    print "Verbs: ", verb_list
+    print "Nouns: ", noun_list
+    noun_synonyms = set()
+    for word in noun_list:
+        noun_synonyms.update(get_noun_synonyms(word))
+    query_text = " ".join(verb_list + noun_list + list(noun_synonyms) + sans_stop_words_list)
+    print "Query: ", query_text
+
+    query_text = raw_preprocess_text(query_text)
+    print "Stemmed: ", query_text
+
     # expanded_query = expand(filtered_query, thesaurus)
-    # print "Query: ", filtered_query
-    # print "Expanded: ", expanded_query
-    # query_map = preprocess_text(filtered_query)
+    # print "Expanded: ", query_text
+    query_map = preprocess_text(query_text)
 
 
 with open(args.output, 'w') as fo:
-    engine = NotAHackEngine()
-    result = engine.execute_query(query_text)
+    engine = Engine(args.dictionary, args.postings)
+    # engine = NotAHackEngine()
+    result = engine.execute_query(query_map)
     if result is None:
         fo.write('\n')
     else:

@@ -30,11 +30,19 @@ def xml_parse(text):
 def raw_preprocess_text(text):
     return " ".join(STEMMER.stem(w).lower() for w in word_tokenize(text))
 
-def pos_filter_text(text):
+
+def pos_nouns_filter(text):
     text = nltk.pos_tag(word_tokenize(text))
-    text = " ".join(k for k, v in text if v.startswith("NN") or
-                    v.startswith("VB"))
-    return " ".join(w for w in word_tokenize(text) if w.lower() not in stop_words)
+    return [k for k, v in text if v.startswith("NN")]
+
+
+def pos_verbs_filter(text):
+    text = nltk.pos_tag(word_tokenize(text))
+    return [k for k, v in text if v.startswith("VB")]
+
+
+def stop_words_filter(text):
+    return [w for w in word_tokenize(text) if w.lower() not in stop_words]
 
 
 def preprocess_text(text):
@@ -56,6 +64,7 @@ def idf(val, n):
         return 0
     return log10(1.0 * n / val)
 
+
 def get_synonyms(word):
     output = set()
     for sense in wn.synsets(word):
@@ -63,12 +72,11 @@ def get_synonyms(word):
 
     return list(output)
 
+
 def get_noun_synonyms(word):
     output = set()
     for sense in wn.synsets(word):
         if sense.name().split('.')[1] == 'n':
             output.update(sense.lemma_names())
 
-    return list(output)
-
-
+    return [x.replace("_", " ") for x in output]
