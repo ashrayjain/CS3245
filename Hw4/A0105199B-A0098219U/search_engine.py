@@ -221,17 +221,11 @@ with a vector space model to retrieve patents
         for term in vector_sum:
             if term in query_map:
                 vector_sum[term] += query_map[term] * QUERY_WEIGHT
+                
         # adding the remaining terms left in the query vector
         for term in query_map:
             if term not in vector_sum:
                 vector_sum[term] = query_map[term] * QUERY_WEIGHT
-                
-        # print "vector length"
-        # print len(vector_sum)
-        # print vector_sum.keys()
-        # print "query length"
-        # print len(query_map)
-        # print query_map.keys()
 
         # execute query with the new query vector
         return self.execute_query(vector_sum)
