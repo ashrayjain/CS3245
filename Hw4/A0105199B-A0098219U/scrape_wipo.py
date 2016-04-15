@@ -3,7 +3,18 @@ from flask import request
 from selenium.webdriver.support.ui import Select 
 from selenium.webdriver.common.keys import Keys 
 from selenium import webdriver 
- 
+
+"""
+    This script runs on our server, and helps us scrape the wipo website for
+    possible classes pertaining to the query. It enters the query in the 
+    appropriate text area, turns the required knobs, submits, and interprets
+    the results. We then return the results to the client.
+
+    request format: GET /get_results?text=[query]
+    response format: "[Class 1] [Rating 1], ..."
+
+""" 
+
 browser = webdriver.Firefox() 
 browser.implicitly_wait(5) # 5 seconds 
  
