@@ -114,7 +114,7 @@ class Engine(object):
 
     def execute_query(self, query_map):
     """
-    This is the method called to execute a query
+    This method is called to execute a query
     """
         scores = {}
         for term in query_map:
@@ -221,7 +221,7 @@ with a vector space model to retrieve patents
         for term in vector_sum:
             if term in query_map:
                 vector_sum[term] += query_map[term] * QUERY_WEIGHT
-                
+
         # adding the remaining terms left in the query vector
         for term in query_map:
             if term not in vector_sum:
@@ -232,7 +232,7 @@ with a vector space model to retrieve patents
 
     def execute_query(self, query_map):
     """
-    This is the method called to execute a query
+    This method is called to execute a query
     """
         scores = {}
         query_map_copy = copy.deepcopy(query_map)
