@@ -83,39 +83,39 @@ class Engine(object):
         self.dictionary = Dictionary(fd, load=True)
         self.postings = Postings(fp, mode='r')
 
-   def _get_postings(self, offset):
-    """
-    This method gets the postings list at an offset
-    """
+    def _get_postings(self, offset):
+        """
+        This method gets the postings list at an offset
+        """
         return self.postings.list_at_offset(offset)
 
     def _accumulate_scores(self, scores, postings_list, q_wt):
-    """
-    This method accumulates scores for a term
-    """
+        """
+        This method accumulates scores for a term
+        """
         for doc_id, d_tf in postings_list:
             scores[doc_id] = scores.get(doc_id, 0) + q_wt * d_tf
 
     def _normalize(self, scores, q_len):
-    """
-    This method normalises scores for every document
-    """
+        """
+        This method normalises scores for every document
+        """
         for doc_id in scores:
             scores[doc_id] /= (q_len * self.dictionary.doc_length(doc_id))
 
     def _get_top_n_docs(self, scores, n):
-    """
-    This method creates a heap of the docs and pick out the top few
-    """
+        """
+        This method creates a heap of the docs and pick out the top few
+        """
         scores_heap = [(-v, k) for k, v in scores.items()]
         heapq.heapify(scores_heap)
         return [heapq.heappop(scores_heap)[1] for i in xrange(n)
                 if len(scores_heap) > 0]
 
     def execute_query(self, query_map):
-    """
-    This method is called to execute a query
-    """
+        """
+        This method is called to execute a query
+        """
         scores = {}
         for term in query_map:
             q_idf, term_offset = self.dictionary.term(term)
@@ -140,10 +140,10 @@ class Engine(object):
         return " ".join(str(x) for x in scores.keys())
 
 class feedbackEngine(object):
-"""
-Search engine that uses relevance feedback
-with a vector space model to retrieve patents
-"""
+    """
+    Search engine that uses relevance feedback
+    with a vector space model to retrieve patents
+    """
 
     global NUM_RESULTS
     global QUERY_WEIGHT
@@ -158,38 +158,38 @@ with a vector space model to retrieve patents
         self.feedback = False
 
     def _get_postings(self, offset):
-    """
-    This method gets the postings list at an offset
-    """
+        """
+        This method gets the postings list at an offset
+        """
         return self.postings.list_at_offset(offset)
 
     def _accumulate_scores(self, scores, postings_list, q_wt):
-    """
-    This method accumulates scores for a term
-    """
+        """
+        This method accumulates scores for a term
+        """
         for doc_id, d_tf in postings_list:
             scores[doc_id] = scores.get(doc_id, 0) + q_wt * d_tf
 
     def _normalize(self, scores, q_len):
-    """
-    This method normalises scores for every document
-    """
+        """
+        This method normalises scores for every document
+        """
         for doc_id in scores:
             scores[doc_id] /= (q_len * self.dictionary.doc_length(doc_id))
 
     def _get_top_n_docs(self, scores, n):
-    """
-    This method creates a heap of the docs and pick out the top few
-    """
+        """
+        This method creates a heap of the docs and pick out the top few
+        """
         scores_heap = [(-v, k) for k, v in scores.items()]
         heapq.heapify(scores_heap)
         return [heapq.heappop(scores_heap)[1] for i in xrange(n)
                 if len(scores_heap) > 0]
 
     def relevance_feedback(self, query_map, top_n_docs):
-    """
-    This method expands the query based on pseudo relevance feedback
-    """
+        """
+        This method expands the query based on pseudo relevance feedback
+        """
         self.feedback = True
         vector_sum = {}
         term_dict = self.dictionary._terms
@@ -231,9 +231,9 @@ with a vector space model to retrieve patents
         return self.execute_query(vector_sum)
 
     def execute_query(self, query_map):
-    """
-    This method is called to execute a query
-    """
+        """
+        This method is called to execute a query
+        """
         scores = {}
         query_map_copy = copy.deepcopy(query_map)
         for term in query_map:
