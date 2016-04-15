@@ -7,6 +7,6 @@ cd ..
 zip -R A0098219U-A0105199B-A0103516U-A0131729E.zip A0098219U-A0105199B-A0103516U-A0131729E/pygtrie/* A0098219U-A0105199B-A0103516U-A0131729E/*
 cd A0098219U-A0105199B-A0103516U-A0131729E
 echo "Indexing..."
-python index.py -i ../A0105199B-A0098219U-A0103516U-A0131729E/patsnap-corpus -d dictionary.txt -p postings.txt
+python index.py -i ../A0105199B-A0098219U/patsnap-corpus -d dictionary.txt -p postings.txt
 echo "Searching..."
-python search.py -d dictionary.txt -p postings.txt -q ../A0105199B-A0098219U-A0103516U-A0131729E/q1.xml -o output.txt
+python search.py -d dictionary.txt -p postings.txt -q ../A0105199B-A0098219U/q1.xml -o output.txt

@@ -65,7 +65,7 @@ class NotAHackEngine(object):
 
 class Engine(object):
 
-    NUM_RESULTS = 10
+    NUM_RESULTS = 500
 
     def __init__(self, fd, fp):
         self.dictionary = Dictionary(fd, load=True)
@@ -108,6 +108,8 @@ class Engine(object):
 
         # find top n
         # top_n_docs = self._get_top_n_docs(scores, Engine.NUM_RESULTS)
+        # return " ".join(str(x) for x in top_n_docs)
+
         return " ".join(str(x) for x in scores.keys())
 
 
